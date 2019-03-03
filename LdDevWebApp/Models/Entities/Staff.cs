@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class Staff
+    public class Staff : Person
     {
     }
 }

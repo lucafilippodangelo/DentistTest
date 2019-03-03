@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class Patient
+    public class Patient : Person
     {
-        [Key]
-        public Guid giudId { get; set; }
-        public string name { get; set; }
-        public string surname { get; set; }
+        
     }
 }
