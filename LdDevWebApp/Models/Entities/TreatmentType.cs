@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class PractiseLocation
+    public class TreatmentType
     {
         [Key]
-        public Guid practiseLocationId { get; set; }
+        public Guid treatmentTypeId { get; set; }
 
-        public String practiseDescription { get; set; }
+        public string description { get; set; }
     }
 }

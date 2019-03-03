@@ -24,6 +24,7 @@ namespace LdDevWebApp.Models.Entities
         public string notes { get; set; }
 
         [EmailAddress]
+        [Required]
         public string mail { get; set; }
     }
 }
