@@ -1,0 +1,30 @@
+﻿@model LdDevWebApp.Models.Entities.Appointment
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Appointment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.aptScheduledDateTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.aptScheduledDateTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.aptNotes)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.aptNotes)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.giudAptId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

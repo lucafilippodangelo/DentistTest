@@ -10,22 +10,22 @@ using LdDevWebApp.Models.Entities;
 
 namespace LdDevWebApp.Controllers
 {
-    public class PatientsController : Controller
+    public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public PatientsController(ApplicationDbContext context)
+        public AppointmentsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Patients
+        // GET: Appointments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Patients.ToListAsync());
+            return View(await _context.Appointments.ToListAsync());
         }
 
-        // GET: Patients/Details/5
+        // GET: Appointments/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -33,40 +33,40 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(m => m.giudPersonId == id);
-            if (patient == null)
+            var appointment = await _context.Appointments
+                .FirstOrDefaultAsync(m => m.giudAptId == id);
+            if (appointment == null)
             {
                 return NotFound();
             }
 
-            return View(patient);
+            return View(appointment);
         }
 
-        // GET: Patients/Create
+        // GET: Appointments/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Patients/Create
+        // POST: Appointments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("giudId,name,surname")] Patient patient)
+        public async Task<IActionResult> Create([Bind("giudAptId,aptScheduledDateTime,aptNotes")] Appointment appointment)
         {
             if (ModelState.IsValid)
             {
-                patient.giudPersonId = Guid.NewGuid();
-                _context.Add(patient);
+                appointment.giudAptId = Guid.NewGuid();
+                _context.Add(appointment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(patient);
+            return View(appointment);
         }
 
-        // GET: Patients/Edit/5
+        // GET: Appointments/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -74,22 +74,22 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients.FindAsync(id);
-            if (patient == null)
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment == null)
             {
                 return NotFound();
             }
-            return View(patient);
+            return View(appointment);
         }
 
-        // POST: Patients/Edit/5
+        // POST: Appointments/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("giudId,name,surname")] Patient patient)
+        public async Task<IActionResult> Edit(Guid id, [Bind("giudAptId,aptScheduledDateTime,aptNotes")] Appointment appointment)
         {
-            if (id != patient.giudPersonId)
+            if (id != appointment.giudAptId)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace LdDevWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(patient);
+                    _context.Update(appointment);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PatientExists(patient.giudPersonId))
+                    if (!AppointmentExists(appointment.giudAptId))
                     {
                         return NotFound();
                     }
@@ -114,10 +114,10 @@ namespace LdDevWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(patient);
+            return View(appointment);
         }
 
-        // GET: Patients/Delete/5
+        // GET: Appointments/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -125,30 +125,30 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(m => m.giudPersonId == id);
-            if (patient == null)
+            var appointment = await _context.Appointments
+                .FirstOrDefaultAsync(m => m.giudAptId == id);
+            if (appointment == null)
             {
                 return NotFound();
             }
 
-            return View(patient);
+            return View(appointment);
         }
 
-        // POST: Patients/Delete/5
+        // POST: Appointments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var patient = await _context.Patients.FindAsync(id);
-            _context.Patients.Remove(patient);
+            var appointment = await _context.Appointments.FindAsync(id);
+            _context.Appointments.Remove(appointment);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PatientExists(Guid id)
+        private bool AppointmentExists(Guid id)
         {
-            return _context.Patients.Any(e => e.giudPersonId == id);
+            return _context.Appointments.Any(e => e.giudAptId == id);
         }
     }
 }

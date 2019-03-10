@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class AppointmentDuration
+    public class Practise
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid giudId { get; set; }
 
-        [Required]
-        public DateTime timeDuration { get; set; }
+        public String LocationName { get; set; }
 
-        public String timeDurationDescription { get; set; }
+        public String description { get; set; }
+
+        public Guid giudAptId { get; set; } //LD FK
+        public Appointment AppointmentNavigation { get; set; } //LD navigation Key
     }
 }

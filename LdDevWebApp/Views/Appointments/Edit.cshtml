@@ -1,4 +1,4 @@
-﻿@model LdDevWebApp.Models.Entities.Patient
+﻿@model LdDevWebApp.Models.Entities.Appointment
 
 @{
     ViewData["Title"] = "Edit";
@@ -6,22 +6,22 @@
 
 <h2>Edit</h2>
 
-<h4>Patient</h4>
+<h4>Appointment</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="giudPersonId" />
+            <input type="hidden" asp-for="giudAptId" />
             <div class="form-group">
-                <label asp-for="name" class="control-label"></label>
-                <input asp-for="name" class="form-control" />
-                <span asp-validation-for="name" class="text-danger"></span>
+                <label asp-for="aptScheduledDateTime" class="control-label"></label>
+                <input asp-for="aptScheduledDateTime" class="form-control" />
+                <span asp-validation-for="aptScheduledDateTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="surname" class="control-label"></label>
-                <input asp-for="surname" class="form-control" />
-                <span asp-validation-for="surname" class="text-danger"></span>
+                <label asp-for="aptNotes" class="control-label"></label>
+                <input asp-for="aptNotes" class="form-control" />
+                <span asp-validation-for="aptNotes" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
