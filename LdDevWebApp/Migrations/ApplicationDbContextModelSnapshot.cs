@@ -4,16 +4,14 @@ using LdDevWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace LdDevWebApp.Data.Migrations
+namespace LdDevWebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190303114715_addingPatient Table")]
-    partial class addingPatientTable
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,18 +19,130 @@ namespace LdDevWebApp.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("LdDevWebApp.Models.Entities.Patient", b =>
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.Appointment", b =>
+                {
+                    b.Property<Guid>("giudAptId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("aptNotes");
+
+                    b.Property<Guid?>("aptPatientgiudPersonId");
+
+                    b.Property<DateTime>("aptScheduledDateTime");
+
+                    b.Property<Guid>("aptScheduledDurationgiudId");
+
+                    b.Property<Guid?>("aptTreatmentTypegiudId");
+
+                    b.Property<Guid?>("practisegiudId");
+
+                    b.HasKey("giudAptId");
+
+                    b.HasIndex("aptPatientgiudPersonId");
+
+                    b.HasIndex("aptScheduledDurationgiudId");
+
+                    b.HasIndex("aptTreatmentTypegiudId");
+
+                    b.HasIndex("practisegiudId");
+
+                    b.ToTable("Appointments");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentDuration", b =>
                 {
                     b.Property<Guid>("giudId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("name");
+                    b.Property<DateTime>("timeDuration");
 
-                    b.Property<string>("surname");
+                    b.Property<string>("timeDurationDescription");
 
                     b.HasKey("giudId");
 
-                    b.ToTable("Patients");
+                    b.ToTable("AppointmentDurations");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentStaff", b =>
+                {
+                    b.Property<Guid>("giudAptId");
+
+                    b.Property<Guid>("giudPersonId");
+
+                    b.HasKey("giudAptId", "giudPersonId");
+
+                    b.HasIndex("giudPersonId");
+
+                    b.ToTable("AppointmentStaff");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.Person", b =>
+                {
+                    b.Property<Guid>("giudPersonId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
+                    b.Property<string>("mail")
+                        .IsRequired();
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<string>("personNote")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("phone");
+
+                    b.Property<string>("surname")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.HasKey("giudPersonId");
+
+                    b.ToTable("Persons");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Person");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.Practise", b =>
+                {
+                    b.Property<Guid>("giudId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("LocationName");
+
+                    b.Property<string>("description");
+
+                    b.HasKey("giudId");
+
+                    b.ToTable("Practises");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.StaffRole", b =>
+                {
+                    b.Property<Guid>("giudStaffRoleId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("description");
+
+                    b.HasKey("giudStaffRoleId");
+
+                    b.ToTable("StaffRoles");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.TreatmentType", b =>
+                {
+                    b.Property<Guid>("giudId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("description");
+
+                    b.HasKey("giudId");
+
+                    b.ToTable("TreatmentTypes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -200,6 +310,67 @@ namespace LdDevWebApp.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.Patient", b =>
+                {
+                    b.HasBaseType("LdDevWebApp.Models.Entities.Person");
+
+                    b.Property<string>("patientNote")
+                        .HasMaxLength(1000);
+
+                    b.ToTable("Patient");
+
+                    b.HasDiscriminator().HasValue("Patient");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.Staff", b =>
+                {
+                    b.HasBaseType("LdDevWebApp.Models.Entities.Person");
+
+                    b.Property<string>("staffNote")
+                        .HasMaxLength(1000);
+
+                    b.Property<Guid?>("staffRolegiudStaffRoleId");
+
+                    b.HasIndex("staffRolegiudStaffRoleId");
+
+                    b.ToTable("Staff");
+
+                    b.HasDiscriminator().HasValue("Staff");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.Appointment", b =>
+                {
+                    b.HasOne("LdDevWebApp.Models.Entities.Patient", "aptPatient")
+                        .WithMany("patientApts")
+                        .HasForeignKey("aptPatientgiudPersonId");
+
+                    b.HasOne("LdDevWebApp.Models.Entities.AppointmentDuration", "aptScheduledDuration")
+                        .WithMany()
+                        .HasForeignKey("aptScheduledDurationgiudId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("LdDevWebApp.Models.Entities.TreatmentType", "aptTreatmentType")
+                        .WithMany("AppointmentNavigation")
+                        .HasForeignKey("aptTreatmentTypegiudId");
+
+                    b.HasOne("LdDevWebApp.Models.Entities.Practise", "practise")
+                        .WithMany("practiseForApts")
+                        .HasForeignKey("practisegiudId");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentStaff", b =>
+                {
+                    b.HasOne("LdDevWebApp.Models.Entities.Appointment", "appointment")
+                        .WithMany("appointmentStaff")
+                        .HasForeignKey("giudAptId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("LdDevWebApp.Models.Entities.Staff", "staff")
+                        .WithMany("appointmentStaff")
+                        .HasForeignKey("giudPersonId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
@@ -243,6 +414,13 @@ namespace LdDevWebApp.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.Staff", b =>
+                {
+                    b.HasOne("LdDevWebApp.Models.Entities.StaffRole", "staffRole")
+                        .WithMany()
+                        .HasForeignKey("staffRolegiudStaffRoleId");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,7 +11,7 @@ namespace LdDevWebApp.Models.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid giudId { get; set; }
+        public Guid giudStaffRoleId { get; set; }
 
         public string description { get; set; }
     }

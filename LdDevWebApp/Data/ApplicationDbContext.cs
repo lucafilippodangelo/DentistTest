@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
 using LdDevWebApp.Models.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace LdDevWebApp.Data
 {
@@ -12,14 +11,26 @@ namespace LdDevWebApp.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {}
 
-        public DbSet<Person> Persons { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Staff> Staff { get; set; }
+        //public DbSet<AppointmentStaff> AppointmentStaff { get; set; }
+
+        public DbSet<Person> Persons { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Practise> Practises { get; set; }
-        public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentDuration> AppointmentDurations { get; set; }
         public DbSet<StaffRole> StaffRoles { get; set; }
         public DbSet<TreatmentType> TreatmentTypes { get; set; }
+        
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<AppointmentStaff>().HasKey(t => new { t.giudAptId, t.giudPersonId });
+        }
+
+
 
     }
 }

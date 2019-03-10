@@ -10,22 +10,22 @@ using LdDevWebApp.Models.Entities;
 
 namespace LdDevWebApp.Controllers
 {
-    public class PatientsController : Controller
+    public class StaffsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public PatientsController(ApplicationDbContext context)
+        public StaffsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Patients
+        // GET: Staffs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Patients.ToListAsync());
+            return View(await _context.Staff.ToListAsync());
         }
 
-        // GET: Patients/Details/5
+        // GET: Staffs/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -33,40 +33,40 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients
+            var staff = await _context.Staff
                 .FirstOrDefaultAsync(m => m.giudPersonId == id);
-            if (patient == null)
+            if (staff == null)
             {
                 return NotFound();
             }
 
-            return View(patient);
+            return View(staff);
         }
 
-        // GET: Patients/Create
+        // GET: Staffs/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Patients/Create
+        // POST: Staffs/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("giudId,name,surname")] Patient patient)
+        public async Task<IActionResult> Create([Bind("staffNote,giudPersonId,name,surname,phone,personNote,mail")] Staff staff)
         {
             if (ModelState.IsValid)
             {
-                patient.giudPersonId = Guid.NewGuid();
-                _context.Add(patient);
+                staff.giudPersonId = Guid.NewGuid();
+                _context.Add(staff);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(patient);
+            return View(staff);
         }
 
-        // GET: Patients/Edit/5
+        // GET: Staffs/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -74,22 +74,22 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients.FindAsync(id);
-            if (patient == null)
+            var staff = await _context.Staff.FindAsync(id);
+            if (staff == null)
             {
                 return NotFound();
             }
-            return View(patient);
+            return View(staff);
         }
 
-        // POST: Patients/Edit/5
+        // POST: Staffs/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("giudId,name,surname")] Patient patient)
+        public async Task<IActionResult> Edit(Guid id, [Bind("staffNote,giudPersonId,name,surname,phone,personNote,mail")] Staff staff)
         {
-            if (id != patient.giudPersonId)
+            if (id != staff.giudPersonId)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace LdDevWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(patient);
+                    _context.Update(staff);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PatientExists(patient.giudPersonId))
+                    if (!StaffExists(staff.giudPersonId))
                     {
                         return NotFound();
                     }
@@ -114,10 +114,10 @@ namespace LdDevWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(patient);
+            return View(staff);
         }
 
-        // GET: Patients/Delete/5
+        // GET: Staffs/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -125,30 +125,30 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients
+            var staff = await _context.Staff
                 .FirstOrDefaultAsync(m => m.giudPersonId == id);
-            if (patient == null)
+            if (staff == null)
             {
                 return NotFound();
             }
 
-            return View(patient);
+            return View(staff);
         }
 
-        // POST: Patients/Delete/5
+        // POST: Staffs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var patient = await _context.Patients.FindAsync(id);
-            _context.Patients.Remove(patient);
+            var staff = await _context.Staff.FindAsync(id);
+            _context.Staff.Remove(staff);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PatientExists(Guid id)
+        private bool StaffExists(Guid id)
         {
-            return _context.Patients.Any(e => e.giudPersonId == id);
+            return _context.Staff.Any(e => e.giudPersonId == id);
         }
     }
 }

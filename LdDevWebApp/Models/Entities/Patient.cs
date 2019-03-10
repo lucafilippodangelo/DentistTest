@@ -11,7 +11,6 @@ namespace LdDevWebApp.Models.Entities
         [StringLength(1000)]
         public string patientNote { get; set; }
 
-        public Guid giudAptId { get; set; } //LD FK
-        public Appointment AppointmentNavigation { get; set; } //LD navigation Key
+        public ICollection<Appointment> patientApts { get; set; } //LD navigation Key
     }
 }

@@ -20,20 +20,20 @@ namespace LdDevWebApp.Models.Entities
 
         public string aptNotes { get; set; } //to be used if "treatmentType" not listed
 
-        //LD FK Keys
+        //LD to 1 relationships
         [Required]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public AppointmentDuration aptScheduledDuration { get; set; }
 
-        [Required]
         public TreatmentType aptTreatmentType { get; set; }
 
-        public virtual Patient aptPatient { get; set; }
+        public Patient aptPatient { get; set; } //an appointment is for one patient
 
-        public virtual Practise practise { get; set; }
+        public Practise practise { get; set; }
 
         //LD n to n
-        public virtual ICollection<AppointmentStaff_NtoN> appointmentStaff_NtoN { get; set; }
+        //public virtual ICollection<Staff> staff { get; set; } //defining virtual for NtoN
+        public ICollection<AppointmentStaff> appointmentStaff { get; } = new List<AppointmentStaff>();
 
         // Forwarding Status
         //private IAppointmentStatus aptStatus = new Normal();  //start as normal health

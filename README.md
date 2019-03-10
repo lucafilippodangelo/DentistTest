@@ -19,6 +19,13 @@ See [LICENSE](LICENSE).
 - enable migrations in azure (it's possible to access using credentials and endpoint provided in azure)
   - https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-dotnet-sqldatabase
 
+### DOING:
+- DB migrations updated but scaffolding not working and nNtoN not working
+  need to implement 
+  - https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/creating-a-more-complex-data-model-for-an-asp-net-mvc-application
+  - https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/reading-related-data-with-the-entity-framework-in-an-asp-net-mvc-application
+  used in last push using "Entity Framework Core": https://blog.oneunicorn.com/2017/09/25/many-to-many-relationships-in-ef-core-2-0-part-1-the-basics/
+
 ### TO DO:
 - SignalR
   - https://github.com/aspnet/SignalR-samples

@@ -2,12 +2,25 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace LdDevWebApp.Data.Migrations
+namespace LdDevWebApp.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class fist : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AppointmentDurations",
+                columns: table => new
+                {
+                    giudId = table.Column<Guid>(nullable: false),
+                    timeDuration = table.Column<DateTime>(nullable: false),
+                    timeDurationDescription = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppointmentDurations", x => x.giudId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -45,6 +58,43 @@ namespace LdDevWebApp.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Practises",
+                columns: table => new
+                {
+                    giudId = table.Column<Guid>(nullable: false),
+                    LocationName = table.Column<string>(nullable: true),
+                    description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Practises", x => x.giudId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StaffRoles",
+                columns: table => new
+                {
+                    giudStaffRoleId = table.Column<Guid>(nullable: false),
+                    description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StaffRoles", x => x.giudStaffRoleId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TreatmentTypes",
+                columns: table => new
+                {
+                    giudId = table.Column<Guid>(nullable: false),
+                    description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TreatmentTypes", x => x.giudId);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,6 +203,122 @@ namespace LdDevWebApp.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Persons",
+                columns: table => new
+                {
+                    giudPersonId = table.Column<Guid>(nullable: false),
+                    name = table.Column<string>(maxLength: 50, nullable: false),
+                    surname = table.Column<string>(maxLength: 50, nullable: false),
+                    phone = table.Column<string>(nullable: true),
+                    personNote = table.Column<string>(maxLength: 1000, nullable: true),
+                    mail = table.Column<string>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false),
+                    patientNote = table.Column<string>(maxLength: 1000, nullable: true),
+                    staffNote = table.Column<string>(maxLength: 1000, nullable: true),
+                    staffRolegiudStaffRoleId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Persons", x => x.giudPersonId);
+                    table.ForeignKey(
+                        name: "FK_Persons_StaffRoles_staffRolegiudStaffRoleId",
+                        column: x => x.staffRolegiudStaffRoleId,
+                        principalTable: "StaffRoles",
+                        principalColumn: "giudStaffRoleId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Appointments",
+                columns: table => new
+                {
+                    giudAptId = table.Column<Guid>(nullable: false),
+                    aptScheduledDateTime = table.Column<DateTime>(nullable: false),
+                    aptNotes = table.Column<string>(nullable: true),
+                    aptScheduledDurationgiudId = table.Column<Guid>(nullable: false),
+                    aptTreatmentTypegiudId = table.Column<Guid>(nullable: true),
+                    aptPatientgiudPersonId = table.Column<Guid>(nullable: true),
+                    practisegiudId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appointments", x => x.giudAptId);
+                    table.ForeignKey(
+                        name: "FK_Appointments_Persons_aptPatientgiudPersonId",
+                        column: x => x.aptPatientgiudPersonId,
+                        principalTable: "Persons",
+                        principalColumn: "giudPersonId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Appointments_AppointmentDurations_aptScheduledDurationgiudId",
+                        column: x => x.aptScheduledDurationgiudId,
+                        principalTable: "AppointmentDurations",
+                        principalColumn: "giudId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Appointments_TreatmentTypes_aptTreatmentTypegiudId",
+                        column: x => x.aptTreatmentTypegiudId,
+                        principalTable: "TreatmentTypes",
+                        principalColumn: "giudId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Appointments_Practises_practisegiudId",
+                        column: x => x.practisegiudId,
+                        principalTable: "Practises",
+                        principalColumn: "giudId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppointmentStaff",
+                columns: table => new
+                {
+                    giudAptId = table.Column<Guid>(nullable: false),
+                    giudPersonId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppointmentStaff", x => new { x.giudAptId, x.giudPersonId });
+                    table.ForeignKey(
+                        name: "FK_AppointmentStaff_Appointments_giudAptId",
+                        column: x => x.giudAptId,
+                        principalTable: "Appointments",
+                        principalColumn: "giudAptId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppointmentStaff_Persons_giudPersonId",
+                        column: x => x.giudPersonId,
+                        principalTable: "Persons",
+                        principalColumn: "giudPersonId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments_aptPatientgiudPersonId",
+                table: "Appointments",
+                column: "aptPatientgiudPersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments_aptScheduledDurationgiudId",
+                table: "Appointments",
+                column: "aptScheduledDurationgiudId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments_aptTreatmentTypegiudId",
+                table: "Appointments",
+                column: "aptTreatmentTypegiudId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments_practisegiudId",
+                table: "Appointments",
+                column: "practisegiudId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppointmentStaff_giudPersonId",
+                table: "AppointmentStaff",
+                column: "giudPersonId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -191,10 +357,18 @@ namespace LdDevWebApp.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persons_staffRolegiudStaffRoleId",
+                table: "Persons",
+                column: "staffRolegiudStaffRoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AppointmentStaff");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -211,10 +385,28 @@ namespace LdDevWebApp.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Appointments");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Persons");
+
+            migrationBuilder.DropTable(
+                name: "AppointmentDurations");
+
+            migrationBuilder.DropTable(
+                name: "TreatmentTypes");
+
+            migrationBuilder.DropTable(
+                name: "Practises");
+
+            migrationBuilder.DropTable(
+                name: "StaffRoles");
         }
     }
 }

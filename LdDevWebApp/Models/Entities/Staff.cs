@@ -12,8 +12,12 @@ namespace LdDevWebApp.Models.Entities
         [StringLength(1000)]
         public string staffNote { get; set; }
 
+        public StaffRole staffRole { get; set; }
         //LD n to n
-        public virtual ICollection<AppointmentStaff_NtoN> appointmentStaff_NtoN { get; set; }
+        //public virtual List<AppointmentStaff_NtoN> appointmentStaff_NtoN { get; set; }
+        //public virtual ICollection<Appointment> appointment { get; set; }
+        public ICollection<AppointmentStaff> appointmentStaff { get; } = new List<AppointmentStaff>();
+
 
     }
 }

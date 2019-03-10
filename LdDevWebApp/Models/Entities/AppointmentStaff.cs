@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class AppointmentStaff_NtoN
+    public class AppointmentStaff
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid AppointmentStaff_NtoN_giudId { get; set; }
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //public Guid AppointmentStaffGiudId { get; set; }
 
         public Guid giudAptId { get; set; }
         public Appointment appointment { get; set; }
 
-        public Guid giudStaffId { get; set; }
+        public Guid giudPersonId { get; set; }
         public Staff staff { get; set; }
     }
 }
