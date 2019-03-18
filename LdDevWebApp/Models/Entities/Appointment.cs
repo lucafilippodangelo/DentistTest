@@ -35,30 +35,40 @@ namespace LdDevWebApp.Models.Entities
 
         public ICollection<AppointmentStaff> appointmentStaff { get; } = new List<AppointmentStaff>();  //LDNtoN
 
+        //LD STATUS PATTERN - Property
+        private IAptStatus Status { get; set; } //private IAptStatus currentAptStatus = new Initial();
 
-        //LD STATUS PATTERN - PART ONE - initial status when object initialized, this is the default status
-        private IAptStatus currentAptStatus = new Initial(); 
+        //LD CONSTRUCTOR
+        public Appointment(){
+            if (Status == null)
+            Status = new Initial(); //initial status when object initialized, this is the default status
+        }
 
-        //LD STATUS PATTERN - PART TWO - at any time is possible to update the object status. Do necessarely need to care about the current status
+        #region Status Patern
+
+        //LD STATUS PATTERN - at any time is possible to update the object status. Do necessarely need to care about the current status
         public void UpdateStatus(int AptEventCode)
         {
-            currentAptStatus.UpdateStatus(this, AptEventCode);
+            Status.UpdateStatus(this, AptEventCode);
             //UPDATE DB + UPDATE LOGS
         }
 
         //LD STATUS PATTERN - PART THREE - method called from concrete status classes
-        public void SaveStatus(IAptStatus AnAptStatus) 
+        public void SaveStatus(IAptStatus AnAptStatus)
         {
-            this.currentAptStatus = AnAptStatus;
+            this.Status = AnAptStatus;
             //UPDATE DB + UPDATE LOGS
         }
 
         //LD STATUS PATTERN - PART FOUR - possibility to query on current status
-        public void GetCurrentStatus()
+        public IAptStatus GetCurrentStatus()
         {
-            Console.WriteLine("Current Status: " + currentAptStatus.GetType().ToString());
-            //READ DB
+            Console.WriteLine("Current Status: " + Status.GetType().ToString());
+            return Status;
         }
+
+        #endregion
+
 
 
 

@@ -22,7 +22,8 @@ namespace LdDevWebApp.Controllers
 
         // GET: Appointments
         public async Task<IActionResult> Index()
-        {
+       
+            {
             //LD SIMULATION
             Appointment w = new Appointment();
             w.GetCurrentStatus();
@@ -30,10 +31,43 @@ namespace LdDevWebApp.Controllers
             //simulation
             w.UpdateStatus(SingletonAptEvent.Instance["mailSent"]);
             w.GetCurrentStatus();
+            try
+            {
+                _context.Update(w);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AppointmentExists(w.giudAptId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
 
             //simulation
             w.UpdateStatus(SingletonAptEvent.Instance["confirm"]);
             w.GetCurrentStatus();
+            try
+            {
+                _context.Update(w);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AppointmentExists(w.giudAptId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return View(await _context.Appointments.ToListAsync());
         }
