@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
 {
     
-    public interface IAptStatusSupported //LD useful to define the status supported
+    public interface IAptStatus //LD need to be implemented in each concrete status
     {
-        void UpdateAptStatusAction();
+        void UpdateStatus(Appointment apt, int? anAptEvent); //LD "anAptEvent" is one of the events in "SingletonAptEvent.cs"
     }
 }

@@ -11,9 +11,8 @@ namespace LdDevWebApp.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {}
 
-        public DbSet<Appointment> Appointments { get; set; }
-        public DbSet<Staff> Staff { get; set; }
-        //public DbSet<AppointmentStaff> AppointmentStaff { get; set; }
+        public DbSet<Appointment> Appointments { get; set; } //LDNtoN
+        public DbSet<Staff> Staff { get; set; } //LDNtoN
 
         public DbSet<Person> Persons { get; set; }
         public DbSet<Patient> Patients { get; set; }
@@ -27,7 +26,8 @@ namespace LdDevWebApp.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<AppointmentStaff>().HasKey(t => new { t.giudAptId, t.giudPersonId });
+
+            modelBuilder.Entity<AppointmentStaff>().HasKey(t => new { t.giudAptId, t.giudPersonId }); //LDNtoN
         }
 
 

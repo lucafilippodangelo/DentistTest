@@ -10,27 +10,35 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
     public class AptStatusClasses
     {
 
-        public class InitialStatus : IAptStatusSupported
+        public class Initial : IAptStatus
         {
-            void IAptStatusSupported.UpdateAptStatusAction() 
+            void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent) 
             {
-                Console.WriteLine("when from an -Initial Status- we update the status ");
+                if (anAptEvent == 1)
+                {
+                    apt.SaveStatus (new SendError());
+                }
+                else if (anAptEvent == 2)
+                {
+                    apt.SaveStatus(new Sent());
+                }
+                
             }
         }
 
-        public class SendErrorStatus : IAptStatusSupported
+        public class SendError : IAptStatus
         {
-            void IAptStatusSupported.UpdateAptStatusAction()
+            void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent)
             {
-                Console.WriteLine("Current: Send Error status");
+                apt.SaveStatus(new Initial());
             }
         }
 
-        public class SentStatus : IAptStatusSupported
+        public class Sent : IAptStatus
         {
-            void IAptStatusSupported.UpdateAptStatusAction()
+            void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent)
             {
-                Console.WriteLine("Current: Sent status");
+                apt.SaveStatus(new Initial());
             }
         }
 
