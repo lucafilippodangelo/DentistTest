@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LdDevWebApp.Data;
 using LdDevWebApp.Models.Entities;
+using LdDevWebApp.BehavioralPatterns.CreationalPatterns;
 
 namespace LdDevWebApp.Controllers
 {
@@ -22,6 +23,18 @@ namespace LdDevWebApp.Controllers
         // GET: Appointments
         public async Task<IActionResult> Index()
         {
+            //LD SIMULATION
+            Appointment w = new Appointment();
+            w.GetCurrentStatus();
+
+            //simulation
+            w.UpdateStatus(SingletonAptEvent.Instance["mailSent"]);
+            w.GetCurrentStatus();
+
+            //simulation
+            w.UpdateStatus(SingletonAptEvent.Instance["confirm"]);
+            w.GetCurrentStatus();
+
             return View(await _context.Appointments.ToListAsync());
         }
 

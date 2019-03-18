@@ -5,16 +5,14 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.BehavioralPatterns.CreationalPatterns
 {
-    public sealed class SingletonAptStatus
+    public sealed class SingletonAptStatus_TOBEDELETED
     {
-        public static void Main(string[] args) { }
-
         private static Dictionary<int, string> _instance = null;
 
         private static object syncLock = new object();//LD Lock synchronization object
 
         
-        private SingletonAptStatus() //LD The private constructor will make sure that the class can't be instantiated from outside.
+        private SingletonAptStatus_TOBEDELETED() //LD The private constructor will make sure that the class can't be instantiated from outside.
         {
             _instance = new Dictionary<int, string>()
             {
@@ -42,7 +40,7 @@ namespace LdDevWebApp.BehavioralPatterns.CreationalPatterns
                     {
                         if (_instance == null)
                         {
-                            new SingletonAptStatus();
+                            new SingletonAptStatus_TOBEDELETED();
                         }
                     }
                 }

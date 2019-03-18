@@ -40,23 +40,24 @@ namespace LdDevWebApp.Models.Entities
         private IAptStatus currentAptStatus = new Initial(); 
 
         //LD STATUS PATTERN - PART TWO - at any time is possible to update the object status. Do necessarely need to care about the current status
-        public void UpdateStatus()
+        public void UpdateStatus(int AptEventCode)
         {
-            currentAptStatus.UpdateStatus(this, new int());  
+            currentAptStatus.UpdateStatus(this, AptEventCode);
+            //UPDATE DB + UPDATE LOGS
         }
 
         //LD STATUS PATTERN - PART THREE - method called from concrete status classes
         public void SaveStatus(IAptStatus AnAptStatus) 
         {
             this.currentAptStatus = AnAptStatus;
-            //UPDATE DB
+            //UPDATE DB + UPDATE LOGS
         }
 
         //LD STATUS PATTERN - PART FOUR - possibility to query on current status
         public void GetCurrentStatus()
         {
-            //READ FROM DB
             Console.WriteLine("Current Status: " + currentAptStatus.GetType().ToString());
+            //READ DB
         }
 
 

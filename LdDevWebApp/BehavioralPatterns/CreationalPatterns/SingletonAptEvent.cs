@@ -8,22 +8,28 @@ namespace LdDevWebApp.BehavioralPatterns.CreationalPatterns
 
     public sealed class SingletonAptEvent
     {
-        public static void Main(string[] args) { }
+        //public static void Main(string[] args) { }
 
-        private static Dictionary<int, string> _instance = null;
+        private static Dictionary<string, int> _instance = null;
 
         private static object syncLock = new object();//LD Lock synchronization object
 
 
         private SingletonAptEvent() //LD The private constructor will make sure that the class can't be instantiated from outside.
         {
-            _instance = new Dictionary<int, string>()
+            _instance = new Dictionary<string,int>()
                 {
-                    { 1, "mailSendingAttempt"},
-                    { 2, "calcel"},
-                    { 3, "callMeBack"},
-                    { 4, "canceled"},
-                    { 5, "confirm"}
+                    //LD user events
+                    {"cancel",3},
+                    {"callMeBack",4},
+                    {"confirm",5},
+                    //LD system automatic events
+                    {"mailSendError",1},
+                    {"mailSent",2},
+                    //LD administration manual events
+                    {"callMeBackToCanceled",7},
+                    {"callMeBackToConfirmed",8}, 
+                    {"initialToAborted",9} 
                 };
         }
 
@@ -31,7 +37,7 @@ namespace LdDevWebApp.BehavioralPatterns.CreationalPatterns
          * property which will return the static instance of the object present within the class itself. 
          * Hence the object will be shared between all the external entities.
          */
-        public static Dictionary<int, string> Instance
+        public static Dictionary<string, int> Instance
         {
             get
             {
