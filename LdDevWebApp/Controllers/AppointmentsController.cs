@@ -31,43 +31,12 @@ namespace LdDevWebApp.Controllers
             //simulation
             w.UpdateStatus(SingletonAptEvent.Instance["mailSent"]);
             w.GetCurrentStatus();
-            try
-            {
-                _context.Update(w);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AppointmentExists(w.giudAptId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            //I could update db here
 
             //simulation
             w.UpdateStatus(SingletonAptEvent.Instance["confirm"]);
             w.GetCurrentStatus();
-            try
-            {
-                _context.Update(w);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AppointmentExists(w.giudAptId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+           
 
             return View(await _context.Appointments.ToListAsync());
         }
