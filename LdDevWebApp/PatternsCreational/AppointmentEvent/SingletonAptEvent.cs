@@ -27,9 +27,9 @@ namespace LdDevWebApp.BehavioralPatterns.CreationalPatterns
                     {"mailSendError",1},
                     {"mailSent",2},
                     //LD administration manual events
-                    {"callMeBackToCanceled",7},
-                    {"callMeBackToConfirmed",8}, 
-                    {"initialToAborted",9} 
+                    {"canceled",7}, // callMeBackToCanceled
+                    {"confirmed",8}, // callMeBackToConfirmed
+                    {"aborted",9} // initialToAborted
                 };
         }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class AppointmentDuration
+    public class AppointmentDuration_
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
 {
-    
-    public interface IAptStatus //LD need to be implemented in each concrete status
+    /// <summary>
+    /// This interface needs to be implemented in each concrete status
+    /// "Appointment" is the current appointment for which I want to update the status
+    /// "int? anAptEvent" is the event happened for current Appointment in current status
+    /// </summary>
+    public interface IAptStatus 
     {
-        void UpdateStatus(Appointment apt, int? anAptEvent); //LD "anAptEvent" is one of the events in "SingletonAptEvent.cs"
+        void UpdateStatus(Appointment apt, int? anAptEvent);
     }
 }

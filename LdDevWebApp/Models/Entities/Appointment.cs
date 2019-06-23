@@ -11,6 +11,7 @@ namespace LdDevWebApp.Models.Entities
 {
     public class Appointment
     {
+        // =========================== Appointment fields ===========================
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid giudAptId { get; set; }
@@ -22,18 +23,25 @@ namespace LdDevWebApp.Models.Entities
 
         public string aptNotes { get; set; } //to be used if "treatmentType" not listed
 
-        //LD to 1 relationships
-        [Required]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public AppointmentDuration aptScheduledDuration { get; set; }
 
-        public TreatmentType aptTreatmentType { get; set; }
+
+
+        // =========================== Appointment fields ===========================
+        
+        //[Required]
+        //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        //public DateTime aptDuration { get; set; } //public AppointmentDuration_ aptDuration { get; set; }
+
+        // "Appointment Duration" can be calculated on the fly
+
+        //LD to 1 relationships
+        public List<TreatmentType> aptTreatmentType { get; set; } 
 
         public Patient aptPatient { get; set; } //an appointment is for one patient
 
-        public Practise practise { get; set; }
+        public Practise aptPractise { get; set; }
 
-        public ICollection<AppointmentStaff> appointmentStaff { get; } = new List<AppointmentStaff>();  //LDNtoN
+        public List<AppointmentStaff> aptStaffList { get; } = new List<AppointmentStaff>();  //LDNtoN
 
         //LD STATUS PATTERN - Property
         private IAptStatus Status { get; set; } //private IAptStatus currentAptStatus = new Initial();
