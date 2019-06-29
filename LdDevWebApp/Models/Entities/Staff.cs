@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,11 +9,11 @@ namespace LdDevWebApp.Models.Entities
 {
     public class Staff : Person
     {
-        [StringLength(1000)]
-        public string staffNote { get; set; }
+        public virtual StaffRole StaffRole { get; set; } // "virtual" to be enabled to lazy loading
 
-        public StaffRole staffRole { get; set; }
-       
-        public ICollection<AppointmentStaff> appointmentStaff { get; } = new List<AppointmentStaff>();  //LDNtoN <- search for this tag
+        //[NotMapped]
+        //public ICollection<AppointmentStaff> appointmentStaff { get; } = new List<AppointmentStaff>();  //LDNtoN <- search for this tag
     }
 }
+
+

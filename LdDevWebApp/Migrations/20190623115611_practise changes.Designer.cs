@@ -4,18 +4,20 @@ using LdDevWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LdDevWebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190623115611_practise changes")]
+    partial class practisechanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -23,6 +25,8 @@ namespace LdDevWebApp.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("AppointmentTreatmentTypeId");
 
                     b.Property<string>("Notes");
 
@@ -33,6 +37,8 @@ namespace LdDevWebApp.Migrations
                     b.Property<DateTime>("When");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppointmentTreatmentTypeId");
 
                     b.HasIndex("PatientId");
 
@@ -58,6 +64,22 @@ namespace LdDevWebApp.Migrations
                     b.HasIndex("staffId");
 
                     b.ToTable("AppointmentStaff");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentTreatmentType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
+
+                    b.Property<DateTime>("Duration");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TreatmentTypes");
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.Person", b =>
@@ -103,10 +125,6 @@ namespace LdDevWebApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Practises");
-
-                    b.HasData(
-                        new { Id = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise One", Note = "Practse One Note" }
-                    );
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.StaffRole", b =>
@@ -114,9 +132,7 @@ namespace LdDevWebApp.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Note");
-
-                    b.Property<string>("Role");
+                    b.Property<string>("Description");
 
                     b.HasKey("Id");
 
@@ -302,9 +318,9 @@ namespace LdDevWebApp.Migrations
                 {
                     b.HasBaseType("LdDevWebApp.Models.Entities.Person");
 
-                    b.Property<Guid?>("StaffRoleId");
+                    b.Property<Guid?>("RoleId");
 
-                    b.HasIndex("StaffRoleId");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Staff");
 
@@ -313,6 +329,10 @@ namespace LdDevWebApp.Migrations
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.Appointment", b =>
                 {
+                    b.HasOne("LdDevWebApp.Models.Entities.AppointmentTreatmentType")
+                        .WithMany("AppointmentNavigation")
+                        .HasForeignKey("AppointmentTreatmentTypeId");
+
                     b.HasOne("LdDevWebApp.Models.Entities.Patient", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId");
@@ -380,9 +400,9 @@ namespace LdDevWebApp.Migrations
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.Staff", b =>
                 {
-                    b.HasOne("LdDevWebApp.Models.Entities.StaffRole", "StaffRole")
-                        .WithMany("StaffRoleOfStaff")
-                        .HasForeignKey("StaffRoleId");
+                    b.HasOne("LdDevWebApp.Models.Entities.StaffRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
                 });
 #pragma warning restore 612, 618
         }

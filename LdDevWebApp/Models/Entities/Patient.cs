@@ -8,9 +8,6 @@ namespace LdDevWebApp.Models.Entities
 {
     public class Patient : Person
     {
-        [StringLength(1000)]
-        public string patientNote { get; set; }
-
-        public ICollection<Appointment> patientApts { get; set; } //LD navigation Key
+        public ICollection<Appointment> Appointments { get; set; } //LD navigation Key
     }
 }

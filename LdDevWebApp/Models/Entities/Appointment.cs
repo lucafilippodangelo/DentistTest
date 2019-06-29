@@ -14,34 +14,30 @@ namespace LdDevWebApp.Models.Entities
         // =========================== Appointment fields ===========================
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid giudAptId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime aptScheduledDateTime { get; set; }
+        public DateTime When { get; set; } // Scheduled Date Time
 
-        public string aptNotes { get; set; } //to be used if "treatmentType" not listed
+        public string Notes { get; set; } //to be used if "treatmentType" not listed
 
 
 
 
         // =========================== Appointment fields ===========================
         
-        //[Required]
-        //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        //public DateTime aptDuration { get; set; } //public AppointmentDuration_ aptDuration { get; set; }
+        public virtual Patient Patient { get; set; } //an appointment is for one patient. "virtual" to be enabled to lazy loading
 
-        // "Appointment Duration" can be calculated on the fly
+        public virtual Practise Practise { get; set; }
 
-        //LD to 1 relationships
-        public List<TreatmentType> aptTreatmentType { get; set; } 
+        public virtual ICollection<AppointmentStaff> StaffList { get; } = new List<AppointmentStaff>();  //LDNtoN
+         
+        [NotMapped]
+        public virtual ICollection<AppointmentTreatmentType> TreatmentTypes { get; set; }
 
-        public Patient aptPatient { get; set; } //an appointment is for one patient
-
-        public Practise aptPractise { get; set; }
-
-        public List<AppointmentStaff> aptStaffList { get; } = new List<AppointmentStaff>();  //LDNtoN
+        // =========================== Appointment status ===========================
 
         //LD STATUS PATTERN - Property
         private IAptStatus Status { get; set; } //private IAptStatus currentAptStatus = new Initial();

@@ -22,11 +22,18 @@ See [LICENSE](LICENSE).
 ### DOING:
 - DB migrations updated but scaffolding not working and nNtoN not working
   need to implement 
-  - https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/creating-a-more-complex-data-model-for-an-asp-net-mvc-application
-  - https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/reading-related-data-with-the-entity-framework-in-an-asp-net-mvc-application
+  - https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/read-related-data?view=aspnetcore-2.2
   used in last push using "Entity Framework Core": https://blog.oneunicorn.com/2017/09/25/many-to-many-relationships-in-ef-core-2-0-part-1-the-basics/
 
 ### TO DO:
+
+- save main and related instances(use dependency injection)
+
+
+- mail engine
+- signal r
+- logs
+
 - SignalR
   - https://github.com/aspnet/SignalR-samples
   - https://docs.microsoft.com/en-us/aspnet/core/signalr/introduction?view=aspnetcore-2.2

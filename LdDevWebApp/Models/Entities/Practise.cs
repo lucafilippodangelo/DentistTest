@@ -11,11 +11,11 @@ namespace LdDevWebApp.Models.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid giudId { get; set; }
+        public Guid Id { get; set; }
 
-        public String LocationName { get; set; }
+        public string Name { get; set; }
 
-        public String description { get; set; }
+        public string Note { get; set; }
 
         public ICollection<Appointment> practiseForApts { get; set; } //LD navigation Key
     }

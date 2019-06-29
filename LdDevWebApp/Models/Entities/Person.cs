@@ -11,24 +11,24 @@ namespace LdDevWebApp.Models.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid giudPersonId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string name { get; set; }
+        [StringLength(150)]
+        public string Name { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string surname { get; set; }
+        [StringLength(150)]
+        public string Surname { get; set; }
 
         [Phone]
-        public string phone { get; set; }
+        public string Phone { get; set; }
 
         [StringLength(1000)]
-        public string personNote { get; set; }
+        public string Note { get; set; }
 
         [EmailAddress]
         [Required]
-        public string mail { get; set; }
+        public string Mail { get; set; }
     }
 }

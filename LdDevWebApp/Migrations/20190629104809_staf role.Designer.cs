@@ -4,14 +4,16 @@ using LdDevWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LdDevWebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190629104809_staf role")]
+    partial class stafrole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,10 +105,6 @@ namespace LdDevWebApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Practises");
-
-                    b.HasData(
-                        new { Id = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise One", Note = "Practse One Note" }
-                    );
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.StaffRole", b =>

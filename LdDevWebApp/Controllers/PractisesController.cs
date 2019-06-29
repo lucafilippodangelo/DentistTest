@@ -7,41 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LdDevWebApp.Data;
 using LdDevWebApp.Models.Entities;
-using LdDevWebApp.BehavioralPatterns.CreationalPatterns;
 
 namespace LdDevWebApp.Controllers
 {
-    public class AppointmentsController : Controller
+    public class PractisesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AppointmentsController(ApplicationDbContext context)
+        public PractisesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Appointments
+        // GET: Practises
         public async Task<IActionResult> Index()
-       
-            {
-            //LD SIMULATION
-            Appointment w = new Appointment();
-            w.GetCurrentStatus();
-
-            //simulation
-            w.UpdateStatus(SingletonAptEvent.Instance["mailSent"]);
-            w.GetCurrentStatus();
-            //I could update db here
-
-            //simulation
-            w.UpdateStatus(SingletonAptEvent.Instance["confirm"]);
-            w.GetCurrentStatus();
-           
-
-            return View(await _context.Appointments.ToListAsync());
+        {
+            return View(await _context.Practises.ToListAsync());
         }
 
-        // GET: Appointments/Details/5
+        // GET: Practises/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -49,40 +33,40 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(m => m.giudAptId == id);
-            if (appointment == null)
+            var practise = await _context.Practises
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (practise == null)
             {
                 return NotFound();
             }
 
-            return View(appointment);
+            return View(practise);
         }
 
-        // GET: Appointments/Create
+        // GET: Practises/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Appointments/Create
+        // POST: Practises/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("giudAptId,aptScheduledDateTime,aptNotes")] Appointment appointment)
+        public async Task<IActionResult> Create([Bind("Id,Name,Note")] Practise practise)
         {
             if (ModelState.IsValid)
             {
-                appointment.giudAptId = Guid.NewGuid();
-                _context.Add(appointment);
+                practise.Id = Guid.NewGuid();
+                _context.Add(practise);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(appointment);
+            return View(practise);
         }
 
-        // GET: Appointments/Edit/5
+        // GET: Practises/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -90,22 +74,22 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null)
+            var practise = await _context.Practises.FindAsync(id);
+            if (practise == null)
             {
                 return NotFound();
             }
-            return View(appointment);
+            return View(practise);
         }
 
-        // POST: Appointments/Edit/5
+        // POST: Practises/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("giudAptId,aptScheduledDateTime,aptNotes")] Appointment appointment)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Note")] Practise practise)
         {
-            if (id != appointment.giudAptId)
+            if (id != practise.Id)
             {
                 return NotFound();
             }
@@ -114,12 +98,12 @@ namespace LdDevWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(appointment);
+                    _context.Update(practise);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AppointmentExists(appointment.giudAptId))
+                    if (!PractiseExists(practise.Id))
                     {
                         return NotFound();
                     }
@@ -130,10 +114,10 @@ namespace LdDevWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(appointment);
+            return View(practise);
         }
 
-        // GET: Appointments/Delete/5
+        // GET: Practises/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -141,30 +125,30 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(m => m.giudAptId == id);
-            if (appointment == null)
+            var practise = await _context.Practises
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (practise == null)
             {
                 return NotFound();
             }
 
-            return View(appointment);
+            return View(practise);
         }
 
-        // POST: Appointments/Delete/5
+        // POST: Practises/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var appointment = await _context.Appointments.FindAsync(id);
-            _context.Appointments.Remove(appointment);
+            var practise = await _context.Practises.FindAsync(id);
+            _context.Practises.Remove(practise);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AppointmentExists(Guid id)
+        private bool PractiseExists(Guid id)
         {
-            return _context.Appointments.Any(e => e.giudAptId == id);
+            return _context.Practises.Any(e => e.Id == id);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace LdDevWebApp.Controllers
             }
 
             var staff = await _context.Staff
-                .FirstOrDefaultAsync(m => m.giudPersonId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (staff == null)
             {
                 return NotFound();
@@ -49,16 +49,13 @@ namespace LdDevWebApp.Controllers
             return View();
         }
 
-        // POST: Staffs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("staffNote,giudPersonId,name,surname,phone,personNote,mail")] Staff staff)
+        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Phone,Mail,Note")] Staff staff)
         {
             if (ModelState.IsValid)
             {
-                staff.giudPersonId = Guid.NewGuid();
+                staff.Id = Guid.NewGuid();
                 _context.Add(staff);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -83,13 +80,11 @@ namespace LdDevWebApp.Controllers
         }
 
         // POST: Staffs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("staffNote,giudPersonId,name,surname,phone,personNote,mail")] Staff staff)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Surname,Phone,Mail,Note")] Staff staff)
         {
-            if (id != staff.giudPersonId)
+            if (id != staff.Id)
             {
                 return NotFound();
             }
@@ -103,7 +98,7 @@ namespace LdDevWebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StaffExists(staff.giudPersonId))
+                    if (!StaffExists(staff.Id))
                     {
                         return NotFound();
                     }
@@ -126,7 +121,7 @@ namespace LdDevWebApp.Controllers
             }
 
             var staff = await _context.Staff
-                .FirstOrDefaultAsync(m => m.giudPersonId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (staff == null)
             {
                 return NotFound();
@@ -148,7 +143,7 @@ namespace LdDevWebApp.Controllers
 
         private bool StaffExists(Guid id)
         {
-            return _context.Staff.Any(e => e.giudPersonId == id);
+            return _context.Staff.Any(e => e.Id == id);
         }
     }
 }

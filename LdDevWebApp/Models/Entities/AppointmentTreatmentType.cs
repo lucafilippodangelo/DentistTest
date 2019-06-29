@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class TreatmentType
+    public class AppointmentTreatmentType
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid giudId { get; set; }
+        public Guid Id { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public string description { get; set; }
+        public DateTime Duration { get; set; } //average duration, basically is the standard duration
 
-        public DateTime duration { get; set; }
+        public string Description { get; set; }
 
         public ICollection<Appointment> AppointmentNavigation { get; set; } //LD navigation Key
     }

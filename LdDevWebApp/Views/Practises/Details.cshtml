@@ -1,4 +1,4 @@
-﻿@model LdDevWebApp.Models.Entities.Staff
+﻿@model LdDevWebApp.Models.Entities.Practise
 
 @{
     ViewData["Title"] = "Details";
@@ -7,7 +7,7 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Staff</h4>
+    <h4>Practise</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -17,28 +17,10 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Surname)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Surname)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.Note)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Note)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Mail)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Mail)
         </dd>
     </dl>
 </div>
