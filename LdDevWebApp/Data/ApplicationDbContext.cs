@@ -31,12 +31,11 @@ namespace LdDevWebApp.Data
 
 
             mb.Entity<Practise>().HasData(
-                new {
-                    Id = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"),
-                    Name = "Practise One",
-                    Note = "Practse One Note"
-                    }
+                new { Id = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise One", Note = "Practse One Note" },
+                new { Id = new System.Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise Two", Note = "Practse Two Note" }
                 );
+
+
         }
 
 

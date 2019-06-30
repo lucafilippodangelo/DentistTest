@@ -10,28 +10,22 @@ using LdDevWebApp.Models.Entities;
 
 namespace LdDevWebApp.Controllers
 {
-    public class StaffsController : Controller
+    public class StaffRolesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public StaffsController(ApplicationDbContext context)
+        public StaffRolesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Staffs
+        // GET: StaffRoles
         public async Task<IActionResult> Index()
         {
-            //return View(await _context.Staff.ToListAsync()); //LD before I was returning a simple list
-
-            
-            var staff = _context.Staff
-                .Include(sta => sta.StaffRole)
-                .AsNoTracking();
-            return View(await staff.ToListAsync());
+            return View(await _context.StaffRoles.ToListAsync());
         }
 
-        // GET: Staffs/Details/5
+        // GET: StaffRoles/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -39,37 +33,40 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff
+            var staffRole = await _context.StaffRoles
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (staff == null)
+            if (staffRole == null)
             {
                 return NotFound();
             }
 
-            return View(staff);
+            return View(staffRole);
         }
 
-        // GET: Staffs/Create
+        // GET: StaffRoles/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: StaffRoles/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Phone,Mail,Note")] Staff staff)
+        public async Task<IActionResult> Create([Bind("Id,Role,Note")] StaffRole staffRole)
         {
             if (ModelState.IsValid)
             {
-                staff.Id = Guid.NewGuid();
-                _context.Add(staff);
+                staffRole.Id = Guid.NewGuid();
+                _context.Add(staffRole);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(staff);
+            return View(staffRole);
         }
 
-        // GET: Staffs/Edit/5
+        // GET: StaffRoles/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -77,20 +74,22 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff.FindAsync(id);
-            if (staff == null)
+            var staffRole = await _context.StaffRoles.FindAsync(id);
+            if (staffRole == null)
             {
                 return NotFound();
             }
-            return View(staff);
+            return View(staffRole);
         }
 
-        // POST: Staffs/Edit/5
+        // POST: StaffRoles/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Surname,Phone,Mail,Note")] Staff staff)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Role,Note")] StaffRole staffRole)
         {
-            if (id != staff.Id)
+            if (id != staffRole.Id)
             {
                 return NotFound();
             }
@@ -99,12 +98,12 @@ namespace LdDevWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(staff);
+                    _context.Update(staffRole);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StaffExists(staff.Id))
+                    if (!StaffRoleExists(staffRole.Id))
                     {
                         return NotFound();
                     }
@@ -115,10 +114,10 @@ namespace LdDevWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(staff);
+            return View(staffRole);
         }
 
-        // GET: Staffs/Delete/5
+        // GET: StaffRoles/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -126,30 +125,30 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff
+            var staffRole = await _context.StaffRoles
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (staff == null)
+            if (staffRole == null)
             {
                 return NotFound();
             }
 
-            return View(staff);
+            return View(staffRole);
         }
 
-        // POST: Staffs/Delete/5
+        // POST: StaffRoles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var staff = await _context.Staff.FindAsync(id);
-            _context.Staff.Remove(staff);
+            var staffRole = await _context.StaffRoles.FindAsync(id);
+            _context.StaffRoles.Remove(staffRole);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StaffExists(Guid id)
+        private bool StaffRoleExists(Guid id)
         {
-            return _context.Staff.Any(e => e.Id == id);
+            return _context.StaffRoles.Any(e => e.Id == id);
         }
     }
 }

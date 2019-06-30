@@ -17,8 +17,8 @@ namespace LdDevWebApp.Models.Entities
         public Guid Id { get; set; }
 
         [Required]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.DateTime)] //LD save date and time
+        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime When { get; set; } // Scheduled Date Time
 
         public string Notes { get; set; } //to be used if "treatmentType" not listed

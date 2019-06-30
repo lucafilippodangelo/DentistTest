@@ -10,28 +10,32 @@ using LdDevWebApp.Models.Entities;
 
 namespace LdDevWebApp.Controllers
 {
-    public class StaffsController : Controller
+    public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public StaffsController(ApplicationDbContext context)
+        public AppointmentsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Staffs
+        // GET: Appointments
         public async Task<IActionResult> Index()
         {
-            //return View(await _context.Staff.ToListAsync()); //LD before I was returning a simple list
+            //return View(await _context.Appointments.ToListAsync());
 
+            var appointments = _context.Appointments 
+            .OrderBy (app => app.When)
+            .Include(app => app.Practise)
+            .AsNoTracking()
+            .ToListAsync ()
+            ;
             
-            var staff = _context.Staff
-                .Include(sta => sta.StaffRole)
-                .AsNoTracking();
-            return View(await staff.ToListAsync());
+            var letsSee = await appointments;
+            return View(letsSee);
         }
 
-        // GET: Staffs/Details/5
+        // GET: Appointments/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -39,37 +43,40 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff
+            var appointment = await _context.Appointments
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (staff == null)
+            if (appointment == null)
             {
                 return NotFound();
             }
 
-            return View(staff);
+            return View(appointment);
         }
 
-        // GET: Staffs/Create
+        // GET: Appointments/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Appointments/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Phone,Mail,Note")] Staff staff)
+        public async Task<IActionResult> Create([Bind("Id,When,Notes")] Appointment appointment)
         {
             if (ModelState.IsValid)
             {
-                staff.Id = Guid.NewGuid();
-                _context.Add(staff);
+                appointment.Id = Guid.NewGuid();
+                _context.Add(appointment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(staff);
+            return View(appointment);
         }
 
-        // GET: Staffs/Edit/5
+        // GET: Appointments/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -77,20 +84,22 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff.FindAsync(id);
-            if (staff == null)
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment == null)
             {
                 return NotFound();
             }
-            return View(staff);
+            return View(appointment);
         }
 
-        // POST: Staffs/Edit/5
+        // POST: Appointments/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Surname,Phone,Mail,Note")] Staff staff)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes")] Appointment appointment)
         {
-            if (id != staff.Id)
+            if (id != appointment.Id)
             {
                 return NotFound();
             }
@@ -99,12 +108,12 @@ namespace LdDevWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(staff);
+                    _context.Update(appointment);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StaffExists(staff.Id))
+                    if (!AppointmentExists(appointment.Id))
                     {
                         return NotFound();
                     }
@@ -115,10 +124,10 @@ namespace LdDevWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(staff);
+            return View(appointment);
         }
 
-        // GET: Staffs/Delete/5
+        // GET: Appointments/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -126,30 +135,30 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff
+            var appointment = await _context.Appointments
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (staff == null)
+            if (appointment == null)
             {
                 return NotFound();
             }
 
-            return View(staff);
+            return View(appointment);
         }
 
-        // POST: Staffs/Delete/5
+        // POST: Appointments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var staff = await _context.Staff.FindAsync(id);
-            _context.Staff.Remove(staff);
+            var appointment = await _context.Appointments.FindAsync(id);
+            _context.Appointments.Remove(appointment);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StaffExists(Guid id)
+        private bool AppointmentExists(Guid id)
         {
-            return _context.Staff.Any(e => e.Id == id);
+            return _context.Appointments.Any(e => e.Id == id);
         }
     }
 }
