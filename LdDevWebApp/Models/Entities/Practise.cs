@@ -17,8 +17,10 @@ namespace LdDevWebApp.Models.Entities
 
         public string Address { get; set; }
 
-        public string Note { get; set; }
+        public string Notes { get; set; }
 
-        public ICollection<Appointment> HoldAppointments { get; set; } //LD navigation Key
+        public virtual ICollection<Appointment> Appointments { get; set; } //LD navigation Key
+
+
     }
 }

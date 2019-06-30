@@ -39,6 +39,36 @@ namespace LdDevWebApp.Migrations
                     b.HasIndex("PractiseId");
 
                     b.ToTable("Appointments");
+
+                    b.HasData(
+                        new { Id = new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), Notes = "Seeded Appointment One", PractiseId = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), When = new DateTime(2019, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
+                        new { Id = new Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), Notes = "Seeded Appointment Two", PractiseId = new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), When = new DateTime(2019, 6, 1, 14, 30, 0, 0, DateTimeKind.Unspecified) }
+                    );
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("AppointmentId");
+
+                    b.Property<string>("Information");
+
+                    b.Property<DateTime>("When");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.ToTable("AppointmentLogs");
+
+                    b.HasData(
+                        new { Id = new Guid("1d2f7b60-6236-4598-a28b-a03d03eb1b94"), AppointmentId = new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), Information = "Seeded Log One for Appointment One", When = new DateTime(2019, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
+                        new { Id = new Guid("253d32ba-ba51-4f51-b151-caa02eb54f23"), AppointmentId = new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), Information = "Seeded Log Two for Appointment One", When = new DateTime(2019, 5, 2, 14, 30, 0, 0, DateTimeKind.Unspecified) },
+                        new { Id = new Guid("3b3d41f9-ed3b-45b6-89d5-a878b007b32a"), AppointmentId = new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), Information = "Seeded Log Three for Appointment One", When = new DateTime(2019, 6, 3, 4, 30, 0, 0, DateTimeKind.Unspecified) },
+                        new { Id = new Guid("4e80d553-b1fd-4aed-9020-2206e2aa23cf"), AppointmentId = new Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), Information = "Seeded Log One for Appointment Two", When = new DateTime(2019, 6, 4, 5, 30, 0, 0, DateTimeKind.Unspecified) }
+                    );
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentStaff", b =>
@@ -47,11 +77,16 @@ namespace LdDevWebApp.Migrations
 
                     b.Property<Guid>("giudPersonId");
 
+                    b.Property<Guid>("AppointmentStaffGiudId")
+                        .ValueGeneratedOnAdd();
+
                     b.Property<Guid?>("appointmentId");
 
                     b.Property<Guid?>("staffId");
 
                     b.HasKey("giudAptId", "giudPersonId");
+
+                    b.HasAlternateKey("AppointmentStaffGiudId");
 
                     b.HasIndex("appointmentId");
 
@@ -100,15 +135,15 @@ namespace LdDevWebApp.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Note");
+                    b.Property<string>("Notes");
 
                     b.HasKey("Id");
 
                     b.ToTable("Practises");
 
                     b.HasData(
-                        new { Id = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise One", Note = "Practse One Note" },
-                        new { Id = new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise Two", Note = "Practse Two Note" }
+                        new { Id = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise One", Notes = "Seeded Practise Note One" },
+                        new { Id = new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise Two", Notes = "Seeded Practise Note Two" }
                     );
                 });
 
@@ -321,8 +356,15 @@ namespace LdDevWebApp.Migrations
                         .HasForeignKey("PatientId");
 
                     b.HasOne("LdDevWebApp.Models.Entities.Practise", "Practise")
-                        .WithMany("HoldAppointments")
+                        .WithMany("Appointments")
                         .HasForeignKey("PractiseId");
+                });
+
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentLog", b =>
+                {
+                    b.HasOne("LdDevWebApp.Models.Entities.Appointment")
+                        .WithMany("AppointmentLogs")
+                        .HasForeignKey("AppointmentId");
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentStaff", b =>

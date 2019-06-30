@@ -26,16 +26,18 @@ namespace LdDevWebApp.Models.Entities
 
 
 
-        // =========================== Appointment fields ===========================
+        // =========================== Appointment FK fields ===========================
         
-        public virtual Patient Patient { get; set; } //an appointment is for one patient. "virtual" to be enabled to lazy loading
+        public virtual Patient Patient { get; set; } //LD Appointment is for one specific patient. "virtual" to be enabled to lazy loading
 
-        public virtual Practise Practise { get; set; }
+        public virtual Practise Practise { get; set; } //LD Appointment happens in a specific Practise. EF will set by default convention the FK "PractiseId" in table. Use "PractiseId" when seeding 
 
-        public virtual ICollection<AppointmentStaff> StaffList { get; } = new List<AppointmentStaff>();  //LDNtoN
+        public virtual ICollection<AppointmentLog> AppointmentLogs { get; set; } //LD 1toN - need of a setter "set;" to seed data in "AppointmentLog" seeding 
+
+        public virtual ICollection<AppointmentStaff> StaffList { get; } = new List<AppointmentStaff>();  //LD Appointment can have a list od staff
          
         [NotMapped]
-        public virtual ICollection<AppointmentTreatmentType> TreatmentTypes { get; set; }
+        public virtual ICollection<AppointmentTreatment> AppointmentTreatments { get; set; } //LD Appointment can have a list of treatments
 
         // =========================== Appointment status ===========================
 
@@ -60,7 +62,8 @@ namespace LdDevWebApp.Models.Entities
         //LD STATUS PATTERN - PART THREE - method called from concrete status classes
         public void SaveStatus(IAptStatus AnAptStatus)
         {
-            this.Status = AnAptStatus;
+            Status = AnAptStatus;
+
             //UPDATE DB + UPDATE LOGS
         }
 

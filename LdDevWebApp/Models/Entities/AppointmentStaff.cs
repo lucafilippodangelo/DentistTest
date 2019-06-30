@@ -9,9 +9,9 @@ namespace LdDevWebApp.Models.Entities
 {
     public class AppointmentStaff
     {
-        //[Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //public Guid AppointmentStaffGiudId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid AppointmentStaffGiudId { get; set; }
 
         public Guid giudAptId { get; set; }
         public Appointment appointment { get; set; }

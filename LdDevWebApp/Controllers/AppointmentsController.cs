@@ -24,9 +24,8 @@ namespace LdDevWebApp.Controllers
         {
             //return View(await _context.Appointments.ToListAsync());
 
-            var appointments = _context.Appointments 
+            var appointments = _context.Appointments.Include(app => app.Practise)
             .OrderBy (app => app.When)
-            .Include(app => app.Practise)
             .AsNoTracking()
             .ToListAsync ()
             ;
@@ -43,8 +42,9 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var appointment = await _context.Appointments.Include(a => a.AppointmentLogs).Include (a => a.Practise)
+                .Where(a => a.Id == id).SingleOrDefaultAsync ()
+                ;
             if (appointment == null)
             {
                 return NotFound();

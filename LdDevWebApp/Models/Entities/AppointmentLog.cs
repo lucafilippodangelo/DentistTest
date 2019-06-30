@@ -21,7 +21,7 @@ namespace LdDevWebApp.Models.Entities
         public string Information { get; set; }
 
         //LD FK
-        public Appointment isForAppointment { get; set; }
+        public Appointment Appointment { get; } //LD navigation to appointment, the FK will be automatically created and named by convention "AppointmentId"
 
     }
 }
