@@ -70,6 +70,10 @@ namespace LdDevWebApp.Controllers
             {
                 appointment.Id = Guid.NewGuid();
                 _context.Add(appointment);
+
+                AppointmentLog anAptLog = new AppointmentLog { Information = "created app id " + appointment.Id, When = DateTime.UtcNow ,  Appointment = appointment };
+                _context.Add(anAptLog);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -109,6 +113,8 @@ namespace LdDevWebApp.Controllers
                 try
                 {
                     _context.Update(appointment);
+                    AppointmentLog anAptLog = new AppointmentLog { Information = "UPDATED app " + appointment.Id, When = DateTime.UtcNow, Appointment = appointment };
+                    _context.Add(anAptLog);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

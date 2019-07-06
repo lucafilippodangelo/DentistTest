@@ -10,28 +10,22 @@ using LdDevWebApp.Models.Entities;
 
 namespace LdDevWebApp.Controllers
 {
-    public class StaffsController : Controller
+    public class AppointmentLogsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public StaffsController(ApplicationDbContext context)
+        public AppointmentLogsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Staffs
+        // GET: AppointmentLogs
         public async Task<IActionResult> Index()
         {
-            //return View(await _context.Staff.ToListAsync()); //LD before I was returning a simple list
-
-            
-            var staff = _context.Staff
-                .Include(sta => sta.StaffRole)
-                .AsNoTracking();
-            return View(await staff.ToListAsync());
+            return View(await _context.AppointmentLogs.ToListAsync());
         }
 
-        // GET: Staffs/Details/5
+        // GET: AppointmentLogs/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -39,48 +33,40 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff.Include(s => s.StaffRole)
+            var appointmentLog = await _context.AppointmentLogs
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (staff == null)
+            if (appointmentLog == null)
             {
                 return NotFound();
             }
 
-            return View(staff);
+            return View(appointmentLog);
         }
 
-        // GET: Staffs/Create
+        // GET: AppointmentLogs/Create
         public IActionResult Create()
         {
-            ViewData["StaffRole"] = new SelectList(_context.StaffRoles ,"Id","Role");
             return View();
         }
 
-
-        //private void PopulateStaffList(object selectedStaffRole = null)
-        //{
-        //    var staffRoleQuery = from s in _context.StaffRoles 
-        //                           orderby s.Role 
-        //                           select s;
-        //    ViewBag.StaffRoleId = new SelectList(staffRoleQuery.AsNoTracking(), "StaffRoleId", "Role", selectedStaffRole);
-
-        //}
-
+        // POST: AppointmentLogs/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Phone,Mail,Note,StaffRoleID")] Staff staff)
+        public async Task<IActionResult> Create([Bind("Id,When,Information")] AppointmentLog appointmentLog)
         {
             if (ModelState.IsValid)
             {
-                staff.Id = Guid.NewGuid();
-                _context.Add(staff);
+                appointmentLog.Id = Guid.NewGuid();
+                _context.Add(appointmentLog);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(staff);
+            return View(appointmentLog);
         }
 
-        // GET: Staffs/Edit/5
+        // GET: AppointmentLogs/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -88,20 +74,22 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff.FindAsync(id);
-            if (staff == null)
+            var appointmentLog = await _context.AppointmentLogs.FindAsync(id);
+            if (appointmentLog == null)
             {
                 return NotFound();
             }
-            return View(staff);
+            return View(appointmentLog);
         }
 
-        // POST: Staffs/Edit/5
+        // POST: AppointmentLogs/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Surname,Phone,Mail,Note")] Staff staff)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Information")] AppointmentLog appointmentLog)
         {
-            if (id != staff.Id)
+            if (id != appointmentLog.Id)
             {
                 return NotFound();
             }
@@ -110,12 +98,12 @@ namespace LdDevWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(staff);
+                    _context.Update(appointmentLog);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StaffExists(staff.Id))
+                    if (!AppointmentLogExists(appointmentLog.Id))
                     {
                         return NotFound();
                     }
@@ -126,10 +114,10 @@ namespace LdDevWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(staff);
+            return View(appointmentLog);
         }
 
-        // GET: Staffs/Delete/5
+        // GET: AppointmentLogs/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -137,33 +125,30 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var staff = await _context.Staff
+            var appointmentLog = await _context.AppointmentLogs
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (staff == null)
+            if (appointmentLog == null)
             {
                 return NotFound();
             }
 
-            return View(staff);
+            return View(appointmentLog);
         }
 
-        // POST: Staffs/Delete/5
+        // POST: AppointmentLogs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var staff = await _context.Staff.FindAsync(id);
-            _context.Staff.Remove(staff);
+            var appointmentLog = await _context.AppointmentLogs.FindAsync(id);
+            _context.AppointmentLogs.Remove(appointmentLog);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StaffExists(Guid id)
+        private bool AppointmentLogExists(Guid id)
         {
-            return _context.Staff.Any(e => e.Id == id);
+            return _context.AppointmentLogs.Any(e => e.Id == id);
         }
-
-        #region Support method
-        #endregion
     }
 }

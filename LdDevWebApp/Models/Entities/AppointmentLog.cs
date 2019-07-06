@@ -18,10 +18,11 @@ namespace LdDevWebApp.Models.Entities
         [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime When { get; set; } // Scheduled Date Time
 
+        [Required]
         public string Information { get; set; }
 
         //LD FK
-        public Appointment Appointment { get; } //LD navigation to appointment, the FK will be automatically created and named by convention "AppointmentId"
+        public Appointment Appointment { get; set; } //LD navigation to appointment, the FK will be automatically created and named by convention "AppointmentId"
 
     }
 }

@@ -18,7 +18,7 @@ namespace LdDevWebApp.Models.Entities
 
         [Required]
         [DataType(DataType.DateTime)] //LD save date and time
-        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = false)]
         public DateTime When { get; set; } // Scheduled Date Time
 
         public string Notes { get; set; } //to be used if "treatmentType" not listed
@@ -34,7 +34,7 @@ namespace LdDevWebApp.Models.Entities
 
         public virtual ICollection<AppointmentLog> AppointmentLogs { get; set; } //LD 1toN - need of a setter "set;" to seed data in "AppointmentLog" seeding 
 
-        public virtual ICollection<AppointmentStaff> StaffList { get; } = new List<AppointmentStaff>();  //LD Appointment can have a list od staff
+        public virtual ICollection<AppointmentStaff> StaffList { get; } //= new List<AppointmentStaff>();  //LD Appointment can have a list od staff
          
         [NotMapped]
         public virtual ICollection<AppointmentTreatment> AppointmentTreatments { get; set; } //LD Appointment can have a list of treatments

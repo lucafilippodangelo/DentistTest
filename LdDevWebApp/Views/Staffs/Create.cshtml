@@ -37,6 +37,16 @@
                 <input asp-for="Mail" class="form-control" />
                 <span asp-validation-for="Mail" class="text-danger"></span>
             </div>
+
+
+            <div class="form-group">
+                <label asp-for="StaffRoleID" class="control-label"></label>
+                <select asp-for="StaffRoleID" class="form-control" asp-items="ViewBag.StaffRole">
+                    <option value="">-- Select Staff Role --</option>
+                </select>
+            </div>
+
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
