@@ -1,5 +1,7 @@
 ﻿
+using LdDevWebApp.BehavioralPatterns.AppointmentStatuses;
 using LdDevWebApp.Models.Entities;
+using LdDevWebApp.Models.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,7 +22,7 @@ namespace LdDevWebApp.Data
         public DbSet<Staff> Staff { get; set; } //LD NtoN
         public DbSet<AppointmentLog> AppointmentLogs { get; set; } //LD 1toN
 
-        //public DbSet<AppointmentTreatmentType> TreatmentTypes { get; set; }
+
 
 
 
@@ -36,8 +38,8 @@ namespace LdDevWebApp.Data
                 );
 
             mb.Entity<Appointment>().HasData(
-            new { Id = new System.Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), When = new DateTime(2019, 5, 1, 8, 30, 52), Notes = "Seeded Appointment One", PractiseId = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e") }, //01 May 2019 h8:30:52
-            new { Id = new System.Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), When = new DateTime(2019, 6, 1, 14, 30, 00), Notes = "Seeded Appointment Two", PractiseId = new System.Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e") } //01 Jun 2019 h14:30:00
+            new { Id = new System.Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), When = new DateTime(2019, 5, 1, 8, 30, 52), Notes = "Seeded Appointment One", PractiseId = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e") , StatusID = AptStatusesEnum.st["Initial"] }, //01 May 2019 h8:30:52
+            new { Id = new System.Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), When = new DateTime(2019, 6, 1, 14, 30, 00), Notes = "Seeded Appointment Two", PractiseId = new System.Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), StatusID = AptStatusesEnum.st["Initial"] } //01 Jun 2019 h14:30:00
             );
 
             mb.Entity<AppointmentLog>().HasData(

@@ -27,7 +27,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Practise)
             </th>
-            <th></th>
+            <th>status</th>
         </tr>
     </thead>
     <tbody>
@@ -44,10 +44,13 @@
                 ----- TREATMENT -----
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.When.Date )
+                @Html.DisplayFor(modelItem => item.When.Date)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Practise.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status .GetType() .ToString ())
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

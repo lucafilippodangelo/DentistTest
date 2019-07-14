@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LdDevWebApp.Data;
 using LdDevWebApp.Models.Entities;
+using LdDevWebApp.BehavioralPatterns.AppointmentStatuses;
 
 namespace LdDevWebApp.Controllers
 {
@@ -30,7 +31,10 @@ namespace LdDevWebApp.Controllers
             .ToListAsync ()
             ;
             
+
             var letsSee = await appointments;
+
+
             return View(letsSee);
         }
 
@@ -59,9 +63,6 @@ namespace LdDevWebApp.Controllers
             return View();
         }
 
-        // POST: Appointments/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,When,Notes")] Appointment appointment)
@@ -69,7 +70,10 @@ namespace LdDevWebApp.Controllers
             if (ModelState.IsValid)
             {
                 appointment.Id = Guid.NewGuid();
+                appointment.Status = new Initial();
                 _context.Add(appointment);
+
+                
 
                 AppointmentLog anAptLog = new AppointmentLog { Information = "created app id " + appointment.Id, When = DateTime.UtcNow ,  Appointment = appointment };
                 _context.Add(anAptLog);

@@ -1,16 +1,36 @@
 ﻿using LdDevWebApp.BehavioralPatterns.AppointmentStatuses;
+using LdDevWebApp.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using static LdDevWebApp.BehavioralPatterns.AppointmentStatuses.AptStatusClasses;
+
 
 namespace LdDevWebApp.Models.Entities
 {
     public class Appointment
     {
+
+        // =========================== Appointment Constructor ===========================
+        public Appointment()
+        {
+            if (StatusID == null || StatusID == Guid.Empty)
+            {
+                Status = new Initial(); //initial status when object initialized, this is the default status
+            }
+            else {
+                //need to ask to the DB the object related with the 
+                if (StatusID == AptStatusesEnum.st["Initial"]) {
+                    Status = new Initial(); }
+                if (StatusID == AptStatusesEnum.st["MailSendError"]) {
+                    Status = new MailSendError();
+                }
+            }
+
+        }
+
         // =========================== Appointment fields ===========================
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -23,11 +43,13 @@ namespace LdDevWebApp.Models.Entities
 
         public string Notes { get; set; } //to be used if "treatmentType" not listed
 
-
-
+        //LD STATUS PATTERN - Property
+        public Guid StatusID { get; set; } //I use it to save the status, when the object is created I initialize the property "AptStatus"
+        [NotMapped ]
+        public virtual IAptStatus Status { get; set; } //private IAptStatus currentAptStatus = new Initial();
 
         // =========================== Appointment FK fields ===========================
-        
+
         public virtual Patient Patient { get; set; } //LD Appointment is for one specific patient. "virtual" to be enabled to lazy loading
 
         public virtual Practise Practise { get; set; } //LD Appointment happens in a specific Practise. EF will set by default convention the FK "PractiseId" in table. Use "PractiseId" when seeding 
@@ -41,14 +63,6 @@ namespace LdDevWebApp.Models.Entities
 
         // =========================== Appointment status ===========================
 
-        //LD STATUS PATTERN - Property
-        private IAptStatus Status { get; set; } //private IAptStatus currentAptStatus = new Initial();
-
-        //LD CONSTRUCTOR
-        public Appointment(){
-            if (Status == null)
-            Status = new Initial(); //initial status when object initialized, this is the default status
-        }
 
         #region Status Patern
 

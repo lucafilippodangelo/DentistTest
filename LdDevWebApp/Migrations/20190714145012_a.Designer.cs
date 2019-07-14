@@ -4,20 +4,32 @@ using LdDevWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LdDevWebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190714145012_a")]
+    partial class a
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("LdDevWebApp.BehavioralPatterns.AppointmentStatuses.AptStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AptStatus");
+                });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.Appointment", b =>
                 {
@@ -30,7 +42,7 @@ namespace LdDevWebApp.Migrations
 
                     b.Property<Guid?>("PractiseId");
 
-                    b.Property<Guid>("StatusID");
+                    b.Property<Guid?>("StatusId");
 
                     b.Property<DateTime>("When");
 
@@ -40,11 +52,13 @@ namespace LdDevWebApp.Migrations
 
                     b.HasIndex("PractiseId");
 
+                    b.HasIndex("StatusId");
+
                     b.ToTable("Appointments");
 
                     b.HasData(
-                        new { Id = new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), Notes = "Seeded Appointment One", PractiseId = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), StatusID = new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"), When = new DateTime(2019, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
-                        new { Id = new Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), Notes = "Seeded Appointment Two", PractiseId = new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), StatusID = new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"), When = new DateTime(2019, 6, 1, 14, 30, 0, 0, DateTimeKind.Unspecified) }
+                        new { Id = new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), Notes = "Seeded Appointment One", PractiseId = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), When = new DateTime(2019, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
+                        new { Id = new Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), Notes = "Seeded Appointment Two", PractiseId = new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), When = new DateTime(2019, 6, 1, 14, 30, 0, 0, DateTimeKind.Unspecified) }
                     );
                 });
 
@@ -361,6 +375,10 @@ namespace LdDevWebApp.Migrations
                     b.HasOne("LdDevWebApp.Models.Entities.Practise", "Practise")
                         .WithMany("Appointments")
                         .HasForeignKey("PractiseId");
+
+                    b.HasOne("LdDevWebApp.BehavioralPatterns.AppointmentStatuses.AptStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId");
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentLog", b =>

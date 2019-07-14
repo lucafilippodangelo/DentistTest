@@ -93,13 +93,14 @@ namespace LdDevWebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["StaffRole"] = new SelectList(_context.StaffRoles, "Id", "Role", staff.StaffRoleID); //Passing the default value "staff.StaffRoleID"
             return View(staff);
         }
 
         // POST: Staffs/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Surname,Phone,Mail,Note")] Staff staff)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Surname,Phone,Mail,Note,StaffRoleID")] Staff staff)
         {
             if (id != staff.Id)
             {

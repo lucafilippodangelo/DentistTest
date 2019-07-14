@@ -1,4 +1,5 @@
 ﻿using LdDevWebApp.Models.Entities;
+using LdDevWebApp.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,37 +8,48 @@ using System.Threading.Tasks;
 namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
 {
     //LD each concrete strategy class implements a status 
-    public class AptStatusClasses
-    {
+
 
         public class Initial : IAptStatus
         {
-            void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent) 
+            //public Initial() {
+            ////Id = AptStatusesEnum.st["Initial"];
+            //}
+
+           void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent) 
             {
                 if (anAptEvent == 1) // SingletonAptEvent -> "mailSendError"
                 {
                     apt.SaveStatus (new MailSendError());
                 }
-                else if (anAptEvent == 2) // SingletonAptEvent -> "mailSent"
-                {
-                    apt.SaveStatus(new MailSent());
-                }
-                else if (anAptEvent == 9) // SingletonAptEvent -> "initialToAborted", administration fired event
-                {
-                    apt.SaveStatus(new MailSent());
-                }
+                //else if (anAptEvent == 2) // SingletonAptEvent -> "mailSent"
+                //{
+                //    apt.SaveStatus(new MailSent());
+                //}
+                //else if (anAptEvent == 9) // SingletonAptEvent -> "initialToAborted", administration fired event
+                //{
+                //    apt.SaveStatus(new MailSent());
+                //}
             }
         }
+
+
 
         //LD Status: "MailSendError" - this method is useful to make a massive update of all the object in this status
         public class MailSendError : IAptStatus
         {
-            void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent)
+            public MailSendError() {
+            //Id = AptStatusesEnum.st["MailSendError"];
+        }
+
+        void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent)
             {
                 apt.SaveStatus(new Initial());  // [NO anAptEvent NEEDED], administration fired event
             }
         }
 
+
+    /*
         //LD Status: "MailSent" 
         public class MailSent : IAptStatus
         {
@@ -92,6 +104,6 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
                  }
             }
         }
-
-    }
+        */
+    
 }
