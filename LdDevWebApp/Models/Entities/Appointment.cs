@@ -16,19 +16,7 @@ namespace LdDevWebApp.Models.Entities
         // =========================== Appointment Constructor ===========================
         public Appointment()
         {
-            if (StatusID == null || StatusID == Guid.Empty)
-            {
-                Status = new Initial(); //initial status when object initialized, this is the default status
-            }
-            else {
-                //need to ask to the DB the object related with the 
-                if (StatusID == AptStatusesEnum.st["Initial"]) {
-                    Status = new Initial(); }
-                if (StatusID == AptStatusesEnum.st["MailSendError"]) {
-                    Status = new MailSendError();
-                }
-            }
-
+            AptStateObject = new Default(); //LD default initialization for all the objects
         }
 
         // =========================== Appointment fields ===========================
@@ -43,10 +31,11 @@ namespace LdDevWebApp.Models.Entities
 
         public string Notes { get; set; } //to be used if "treatmentType" not listed
 
-        //LD STATUS PATTERN - Property
+        // =========================== Appointment Status Pattern fields ===========================
+
         public Guid StatusID { get; set; } //I use it to save the status, when the object is created I initialize the property "AptStatus"
         [NotMapped ]
-        public virtual IAptStatus Status { get; set; } //private IAptStatus currentAptStatus = new Initial();
+        public virtual IAptStatus AptStateObject { get; set; } 
 
         // =========================== Appointment FK fields ===========================
 
@@ -67,27 +56,40 @@ namespace LdDevWebApp.Models.Entities
         #region Status Patern
 
         //LD STATUS PATTERN - at any time is possible to update the object status. Do necessarely need to care about the current status
-        public void UpdateStatus(int AptEventCode)
+        public void UpdateStatus(Guid AptEventCode)
         {
-            Status.UpdateStatus(this, AptEventCode);
-            //UPDATE DB + UPDATE LOGS
+            AptStateObject.UpdateStatus(this, AptEventCode);
+            
         }
 
         //LD STATUS PATTERN - PART THREE - method called from concrete status classes
-        public void SaveStatus(IAptStatus AnAptStatus)
+        public void SaveStatus(IAptStatus AnAptStatusObject, Guid AnAptStatusGuid)
         {
-            Status = AnAptStatus;
+            //LD setup current object status
+            AptStateObject = AnAptStatusObject;
+            //LD setup Guid to be saved in database
+            StatusID = AnAptStatusGuid;
 
-            //UPDATE DB + UPDATE LOGS
+            //UPDATE LOGS
         }
 
         //LD STATUS PATTERN - PART FOUR - possibility to query on current status
         public IAptStatus GetCurrentStatus()
         {
-            Console.WriteLine("Current Status: " + Status.GetType().ToString());
-            return Status;
+            Console.WriteLine("Current Status: " + AptStateObject.GetType().ToString());
+            return AptStateObject;
         }
 
+        public void setAptStateObject() {
+            if ((this.StatusID == null) || (this.StatusID == Guid.Empty))
+            {
+                AptStateObject = new Default();
+            }
+            else if (StatusID == AptStatusesEnum.st["Initial"])
+            {
+                AptStateObject = new Initial();
+            }
+        }
         #endregion
 
 

@@ -15,20 +15,8 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
     /// </summary>
     public interface IAptStatus 
     {
-        void UpdateStatus(Appointment apt, int? anAptEvent);
+        void UpdateStatus(Appointment apt, Guid anAptEvent);
+        string AptStateDescription { get; }
     }
-
-
-    ////Abstract class must be imlemented
-    //[NotMapped]
-    //public class AptStatus: IAptStatus
-    //{
-    //    //[Key]
-    //    //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    //    //public Guid Id { get; set; }
-    //    //
-    //    public virtual void UpdateStatus(Appointment apt, int? anAptEvent) { }
-
-    //}
 
 }

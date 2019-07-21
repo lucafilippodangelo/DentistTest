@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LdDevWebApp.Data;
 using LdDevWebApp.Models.Entities;
 using LdDevWebApp.BehavioralPatterns.AppointmentStatuses;
+using LdDevWebApp.Models.Enums;
 
 namespace LdDevWebApp.Controllers
 {
@@ -30,9 +31,10 @@ namespace LdDevWebApp.Controllers
             .AsNoTracking()
             .ToListAsync ()
             ;
-            
-
             var letsSee = await appointments;
+
+            //after retrieving from database then I set not mapped attributes
+            letsSee.ForEach(p => p.setAptStateObject ());
 
 
             return View(letsSee);
@@ -70,10 +72,8 @@ namespace LdDevWebApp.Controllers
             if (ModelState.IsValid)
             {
                 appointment.Id = Guid.NewGuid();
-                appointment.Status = new Initial();
+                appointment.UpdateStatus (AptStatusesEnum.st["Initial"]);
                 _context.Add(appointment);
-
-                
 
                 AppointmentLog anAptLog = new AppointmentLog { Information = "created app id " + appointment.Id, When = DateTime.UtcNow ,  Appointment = appointment };
                 _context.Add(anAptLog);
@@ -100,9 +100,6 @@ namespace LdDevWebApp.Controllers
             return View(appointment);
         }
 
-        // POST: Appointments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes")] Appointment appointment)

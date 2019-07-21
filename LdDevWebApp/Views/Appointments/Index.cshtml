@@ -50,7 +50,7 @@
                 @Html.DisplayFor(modelItem => item.Practise.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status .GetType() .ToString ())
+                @Html.DisplayFor(modelItem => item.AptStateObject .AptStateDescription )
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
