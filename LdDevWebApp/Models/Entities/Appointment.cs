@@ -71,6 +71,8 @@ namespace LdDevWebApp.Models.Entities
             StatusID = AnAptStatusGuid;
 
             //UPDATE LOGS
+
+            //SEND UPDATE EMAILS
         }
 
         //LD STATUS PATTERN - PART FOUR - possibility to query on current status
@@ -80,7 +82,7 @@ namespace LdDevWebApp.Models.Entities
             return AptStateObject;
         }
 
-        //LD set the status of the object
+        //LD set the status of the object. For internal use
         public void setAptStateObject() {
             if ((this.StatusID == null) || (this.StatusID == Guid.Empty))
             {
