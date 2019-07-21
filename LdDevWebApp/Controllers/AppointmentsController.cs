@@ -9,6 +9,7 @@ using LdDevWebApp.Data;
 using LdDevWebApp.Models.Entities;
 using LdDevWebApp.BehavioralPatterns.AppointmentStatuses;
 using LdDevWebApp.Models.Enums;
+using System.Collections;
 
 namespace LdDevWebApp.Controllers
 {
@@ -55,8 +56,12 @@ namespace LdDevWebApp.Controllers
             {
                 return NotFound();
             }
+            else {
+                appointment.setAptStateObject();
+                return View(appointment);
+            }
 
-            return View(appointment);
+
         }
 
         // GET: Appointments/Create
@@ -93,16 +98,33 @@ namespace LdDevWebApp.Controllers
             }
 
             var appointment = await _context.Appointments.FindAsync(id);
+
+
             if (appointment == null)
             {
                 return NotFound();
             }
-            return View(appointment);
+            else {
+                appointment.setAptStateObject();
+
+                var subKeyValue = AptStatusesEnum.st
+                                  .Where(d => d.Value == AptStatusesEnum.st["Initial"] || d.Value == AptStatusesEnum.st["Aborted"])
+                                  .ToList();
+                // 'SelectList' explanation: 
+                //parm -> 'inputlist' is 'subKeyValue'
+                //parm -> "my DATAVALUE in my dictionary is the 'Value' so the guid. it is what will be returned as 'StatusID' in post edit"
+                //parm -> "my DATATEXT in my dictionary is the 'Key' so the text like 'Initial' "
+                //parm -> "appointment.StatusID" is the default value that has to match DATAVALUE type
+                ViewData["AptStatus"] = new SelectList(subKeyValue, "Value", "Key", appointment.StatusID);
+                return View(appointment);
+            }
+           
+            
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes")] Appointment appointment)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID")] Appointment appointment)
         {
             if (id != appointment.Id)
             {

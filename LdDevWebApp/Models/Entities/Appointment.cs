@@ -80,6 +80,7 @@ namespace LdDevWebApp.Models.Entities
             return AptStateObject;
         }
 
+        //LD set the status of the object
         public void setAptStateObject() {
             if ((this.StatusID == null) || (this.StatusID == Guid.Empty))
             {
@@ -88,6 +89,10 @@ namespace LdDevWebApp.Models.Entities
             else if (StatusID == AptStatusesEnum.st["Initial"])
             {
                 AptStateObject = new Initial();
+            }
+            else if (StatusID == AptStatusesEnum.st["Aborted"])
+            {
+                AptStateObject = new Aborted();
             }
         }
         #endregion
