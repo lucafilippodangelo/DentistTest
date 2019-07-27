@@ -17,22 +17,23 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
 
         public void UpdateStatus(Appointment apt, Guid anAptEvent)
         {
-            if (anAptEvent == Guid.Parse("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483")) // "Initial"
+            if (anAptEvent == AptStatusesEnum.st["Initial"]) // "Initial"
             {
                 apt.SaveStatus(new Initial(), anAptEvent);
             }
-            if (anAptEvent == Guid.Parse("4fd374c2-9605-4134-844a-5228e7e46189")) // "mailSendError"
+            if (anAptEvent == AptStatusesEnum.st["MailSendError"]) // "mailSendError"
             {
                 apt.SaveStatus(new MailSendError(), anAptEvent);
             }
-            else if (anAptEvent == Guid.Parse("50001690-71c4-4c64-821e-673b66c187a0")) // "mailSent"
+            else if (anAptEvent == AptStatusesEnum.st["MailSent"]) // "mailSent"
             {
                 apt.SaveStatus(new MailSent(), anAptEvent);
             }
-            else if (anAptEvent == Guid.Parse("1d5649e8-1e0b-46fc-be6d-40bcd1d3c8b9")) // "InitialToAborted"
+            else if (anAptEvent == AptStatusesEnum.st["Aborted"]) // "InitialToAborted"
             {
                 apt.SaveStatus(new Aborted(), anAptEvent);
             }
+            //NEED TO MANAGE NOT COMPATIBLE NEW STATE AND RETURN A WARNING
         }
     }
 
@@ -41,15 +42,15 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
         public string AptStateDescription { get => "Initial"; }
         void IAptStatus.UpdateStatus(Appointment apt, Guid anAptEvent) 
             {
-                if (anAptEvent == Guid.Parse("4fd374c2-9605-4134-844a-5228e7e46189")) // "mailSendError"
+                if (anAptEvent == AptStatusesEnum.st["MailSendError"]) // "mailSendError"
                 {
                     apt.SaveStatus(new MailSendError(), anAptEvent);
                 }
-                else if (anAptEvent == Guid.Parse("50001690-71c4-4c64-821e-673b66c187a0")) // "mailSent"
+                else if (anAptEvent == AptStatusesEnum.st["SendError"]) // "mailSent"
                 {
                     apt.SaveStatus(new MailSent(), anAptEvent);
                 }
-                else if (anAptEvent == Guid.Parse("1d5649e8-1e0b-46fc-be6d-40bcd1d3c8b9")) // "InitialToAborted"
+                else if (anAptEvent == AptStatusesEnum.st["Aborted"]) // "InitialToAborted"
                 {
                     apt.SaveStatus(new Aborted(), anAptEvent);
                 }
@@ -64,7 +65,7 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
         public string AptStateDescription { get => "MailSendError"; }
         void IAptStatus.UpdateStatus(Appointment apt, Guid anAptEvent)
             {
-                if (anAptEvent == Guid.Parse("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483")) // "Initial"
+                if (anAptEvent == AptStatusesEnum.st["Initial"]) // "Initial"
                 {
                     apt.SaveStatus(new Initial(), anAptEvent);
                 }
@@ -76,39 +77,40 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
         public string AptStateDescription { get => "Aborted"; }
         void IAptStatus.UpdateStatus(Appointment apt, Guid anAptEvent)
             {
-                if (anAptEvent == Guid.Parse("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483")) // "Initial"
+                if (anAptEvent == AptStatusesEnum.st["Initial"]) // "Initial"
                 {
                     apt.SaveStatus(new Initial(), anAptEvent);
                 }
             }
         }
 
-
-    //LD Status: "MailSent" 
-    public class MailSent : IAptStatus
-        {
-        public string AptStateDescription { get => "MailSent"; }
-        void IAptStatus.UpdateStatus(Appointment apt, Guid anAptEvent)
-        {
-                //if (anAptEvent == 3) // SingletonAptEvent -> "cancel"
-                //{
-                //    apt.SaveStatus(new Canceled());
-                //}
-                //else if (anAptEvent == 4) // SingletonAptEvent -> "callMeBack"
-                //{
-                //    apt.SaveStatus(new CallMeBack());
-                //}
-                //else if (anAptEvent == 5) // SingletonAptEvent -> "confirm"
-                //{
-                //    apt.SaveStatus(new Confirmed());
-                //}
+        //LD Status: "MailSent" 
+        public class MailSent : IAptStatus
+            {
+            public string AptStateDescription { get => "MailSent"; }
+                void IAptStatus.UpdateStatus(Appointment apt, Guid anAptEvent)
+                {
+                    if (anAptEvent == AptStatusesEnum.st["Canceled"]) 
+                    {
+                        apt.SaveStatus(new Canceled(), anAptEvent);
+                    }
+                    else if (anAptEvent == AptStatusesEnum.st["CallMeBack"])
+                    {
+                        apt.SaveStatus(new CallMeBack(), anAptEvent);
+                    }
+                    else if (anAptEvent == AptStatusesEnum.st["Confirmed"]) 
+                    {
+                        apt.SaveStatus(new Confirmed(), anAptEvent);
+                    }
+                }
             }
-        }
-/*
+
         //LD Status: "Confirmed" - this is a final status
         public class Confirmed : IAptStatus
         {
-            void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent)
+        public string AptStateDescription { get => "Confirmed"; }
+
+        void IAptStatus.UpdateStatus(Appointment apt, Guid anAptEvent)
             {
                 //this is a final status
                 throw new NotImplementedException();
@@ -118,27 +120,31 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
         //LD Status: "Canceled" - this is a final status
         public class Canceled : IAptStatus
         {
-            void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent)
+        public string AptStateDescription => "Canceled";
+
+        void IAptStatus.UpdateStatus(Appointment apt, Guid anAptEvent)
             {
-                apt.SaveStatus(new Initial()); // [NO anAptEvent NEEDED], administration fired event
+                //this is a final status
+                throw new NotImplementedException();
             }
         }
 
         //LD Status: "CallMeBack"
         public class CallMeBack : IAptStatus
         {
-            void IAptStatus.UpdateStatus(Appointment apt, int? anAptEvent)
+        public string AptStateDescription => "CallMeBack";
+        void IAptStatus.UpdateStatus(Appointment apt, Guid anAptEvent)
             {
-                 if (anAptEvent == 7) // SingletonAptEvent -> "callMeBackToCanceled"
+                 if (anAptEvent == AptStatusesEnum.st["Canceled"]) // SingletonAptEvent -> "callMeBackToCanceled"
                 {
-                     apt.SaveStatus(new Canceled());
+                     apt.SaveStatus(new Canceled(), anAptEvent);
                  }
-                 else if (anAptEvent == 8) // SingletonAptEvent -> "callMeBackToConfirmed"
+                 else if (anAptEvent == AptStatusesEnum.st["Confirmed"]) // SingletonAptEvent -> "callMeBackToConfirmed"
                 {
-                     apt.SaveStatus(new Confirmed());
+                     apt.SaveStatus(new Confirmed(), anAptEvent);
                  }
             }
         }
-        */
+       
     
 }

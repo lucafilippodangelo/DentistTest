@@ -33,7 +33,7 @@ namespace LdDevWebApp.Models.Entities
 
         // =========================== Appointment Status Pattern fields ===========================
 
-        public Guid StatusID { get; set; } //I use it to save the status, when the object is created I initialize the property "AptStatus"
+        public Guid StatusID { get; private set; } //I use it to save the status, when the object is created I initialize the property "AptStatus"
         [NotMapped ]
         public virtual IAptStatus AptStateObject { get; set; } 
 
@@ -70,9 +70,7 @@ namespace LdDevWebApp.Models.Entities
             //LD setup Guid to be saved in database
             StatusID = AnAptStatusGuid;
 
-            //UPDATE LOGS
-
-            //SEND UPDATE EMAILS
+            //UPDATE LOGS -> object status saved
         }
 
         //LD STATUS PATTERN - PART FOUR - possibility to query on current status
