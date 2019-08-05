@@ -1,0 +1,112 @@
+﻿@model IEnumerable<LdDevWebApp.Models.Entities.Appointment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+    <p>
+        <div id="alert-placeholder" style="padding: 5px;"></div>
+    </p>
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Patient
+            </th>
+            <th>
+                Staff
+            </th>
+            <th>
+                Treatment
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.When)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Practise)
+            </th>
+            <th>status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Patient.Name)
+                    @Html.DisplayFor(modelItem => item.Patient.Surname)
+                </td>
+                <td>
+                    ----- STAFF -----
+                </td>
+                <td>
+                    ----- TREATMENT -----
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.When.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Practise.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AptStateObject.AptStateDescription)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+
+@section Scripts{
+
+    alert("I am an alert box! 2");
+
+    <script type="text/javascript">
+
+        console.log(" LAYOUT ---> inside scripts");
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/anHub").build();
+
+        connection.start().then(function () {
+            console.log("APPOINTMENT INDEX ---> connection started");
+        });
+
+        connection.on("ReceiveMessage", function (user, message, alertTypeInput) {
+            var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var encodedMsg = user + " says " + msg;
+
+            console.log(" LAYOUT ---> " + encodedMsg);
+
+            var alertHtml = '<div class="alert alert-${alertTypeInput} alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert"><span>×</span></button><strong> something </strong> ${encodedMsg}</div>';
+
+            console.log(" LAYOUT ---> " + alertHtml);
+
+            $(alertHtml)
+                .hide()                           //hide the newly created element (this is required for fadeIn to work)
+                .appendTo('#alert-placeholder')   //add it to the palceholder in the page
+                .fadeIn(500);                     //little flair to grab user attention
+
+
+            //var li = document.createElement("li");
+            //li.textContent = encodedMsg;
+            //document.getElementById("messagesList").appendChild(li);
+
+        });
+
+    </script>
+}
