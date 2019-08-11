@@ -14,6 +14,7 @@ using DentistCore2._2.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using DentistCore2._2.SignalR;
+using Microsoft.AspNet.SignalR;
 
 namespace DentistCore2._2
 {
@@ -44,6 +45,7 @@ namespace DentistCore2._2
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             //LD SR
+
             services.AddSignalR();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -76,9 +78,11 @@ namespace DentistCore2._2
                 routes.MapHub<AnHub>("/anHub");
             }
 
+   
+
             );
-            
-                app.UseMvc(routes =>
+
+            app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",

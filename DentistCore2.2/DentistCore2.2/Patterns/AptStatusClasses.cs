@@ -25,13 +25,17 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
             {
                 apt.SaveStatus(new MailSendError(), anAptEvent);
             }
-            else if (anAptEvent == AptStatusesEnum.st["MailSent"]) // "mailSent"
+            if (anAptEvent == AptStatusesEnum.st["MailSent"]) // "mailSent"
             {
                 apt.SaveStatus(new MailSent(), anAptEvent);
             }
-            else if (anAptEvent == AptStatusesEnum.st["Aborted"]) // "InitialToAborted"
+            if (anAptEvent == AptStatusesEnum.st["Aborted"]) // "InitialToAborted"
             {
                 apt.SaveStatus(new Aborted(), anAptEvent);
+            }
+            if (anAptEvent == AptStatusesEnum.st["Canceled"]) // "InitialToAborted"
+            {
+                apt.SaveStatus(new Canceled(), anAptEvent);
             }
             //NEED TO MANAGE NOT COMPATIBLE NEW STATE AND RETURN A WARNING
         }

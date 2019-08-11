@@ -16,6 +16,7 @@ namespace DentistCore2._2.Controllers
             return View();
         }
 
+       
         public IActionResult Privacy()
         {
             return View();

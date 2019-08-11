@@ -11,6 +11,7 @@ using LdDevWebApp.Models.Enums;
 using System.Collections;
 using DentistCore2._2.Data;
 using System.Threading;
+using DentistCore2._2.SignalR;
 
 namespace LdDevWebApp.Controllers
 {
@@ -62,6 +63,7 @@ namespace LdDevWebApp.Controllers
                 appointment.setAptStateObject();
                 return View(appointment);
             }
+
 
 
         }

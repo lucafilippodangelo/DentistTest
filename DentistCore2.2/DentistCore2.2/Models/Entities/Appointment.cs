@@ -82,6 +82,7 @@ namespace LdDevWebApp.Models.Entities
 
         //LD set the status of the object. For internal use
         public void setAptStateObject() {
+         
             if ((this.StatusID == null) || (this.StatusID == Guid.Empty))
             {
                 AptStateObject = new Default();
@@ -93,6 +94,10 @@ namespace LdDevWebApp.Models.Entities
             else if (StatusID == AptStatusesEnum.st["Aborted"])
             {
                 AptStateObject = new Aborted();
+            }
+            else if (StatusID == AptStatusesEnum.st["Canceled"])
+            {
+                AptStateObject = new Canceled();
             }
         }
         #endregion

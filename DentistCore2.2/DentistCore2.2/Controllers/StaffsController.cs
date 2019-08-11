@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LdDevWebApp.Models.Entities;
 using DentistCore2._2.Data;
+using DentistCore2._2.SignalR;
 
 namespace LdDevWebApp.Controllers
 {
@@ -24,7 +25,6 @@ namespace LdDevWebApp.Controllers
         {
             //return View(await _context.Staff.ToListAsync()); //LD before I was returning a simple list
 
-            
             var staff = _context.Staff
                 .Include(sta => sta.StaffRole)
                 .AsNoTracking();
