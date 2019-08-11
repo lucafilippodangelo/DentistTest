@@ -76,11 +76,7 @@ namespace DentistCore2._2
             app.UseSignalR(routes =>
             {
                 routes.MapHub<AnHub>("/anHub");
-            }
-
-   
-
-            );
+            });
 
             app.UseMvc(routes =>
             {

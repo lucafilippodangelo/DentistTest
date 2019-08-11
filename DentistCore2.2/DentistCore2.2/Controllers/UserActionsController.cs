@@ -7,7 +7,7 @@ using Amazon.OpsWorks.Model;
 using DentistCore2._2.Data;
 using DentistCore2._2.SignalR;
 using LdDevWebApp.Models.Enums;
-using Microsoft.AspNet.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 
@@ -32,19 +32,22 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public async Task SetCanceled()
         {
-            //the input will be encripted
+            ////the input will be encripted
 
-            //retrieve appointment USING INPUT PARM
-            var anAptId = Guid.Parse("644f17b2-6e34-4cad-bab5-8bba425270a4");
+            ////retrieve appointment USING INPUT PARM
+            //var anAptId = Guid.Parse("644f17b2-6e34-4cad-bab5-8bba425270a4");
 
-            var appointment = await _context.Appointments.FindAsync(anAptId);
+            //var appointment = await _context.Appointments.FindAsync(anAptId);
 
-            appointment.UpdateStatus(AptStatusesEnum.st["Canceled"]);
+            //appointment.UpdateStatus(AptStatusesEnum.st["Canceled"]);
 
-            _context.Update(appointment);
-            await _context.SaveChangesAsync();
+            //_context.Update(appointment);
+            //await _context.SaveChangesAsync();
 
-             await _hub.Clients.All.SendMessage("from API", "FROM API", "Danger");
+
+
+
+            await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
 
 
 
