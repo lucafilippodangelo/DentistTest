@@ -14,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 namespace WebApplication1.Controllers
 {
 
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class UserActionsController : Controller
     {
@@ -28,6 +28,21 @@ namespace WebApplication1.Controllers
             _context = context;
             _hub = hubcontext;
         }
+
+        // GET: Appointments/Create
+        //[Authorize]
+        public IActionResult Landing()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> LandingConfirm(int aNumber)//([Bind("Id,When,Notes")] Appointment appointment)
+        //{
+
+        //    return View();
+        //}
 
         [HttpGet]
         public async Task SetCanceled()
@@ -49,8 +64,6 @@ namespace WebApplication1.Controllers
 
             await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
 
-
-
             // UPDATE LOGS -> "OBJECT XXXX STATUS UPDATED"
         }
 
@@ -71,5 +84,6 @@ namespace WebApplication1.Controllers
 
         //    //just need to call "UpdateStatus" of the retrieved object
         //}
+
     }
 }

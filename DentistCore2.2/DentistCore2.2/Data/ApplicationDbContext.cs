@@ -13,8 +13,7 @@ namespace DentistCore2._2.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
 
-        public DbSet<Appointment> Appointments { get; set; } //LDNtoN
-
+        public DbSet<Appointment> Appointments { get; set; } 
 
         public DbSet<Person> Persons { get; set; }
         public DbSet<StaffRole> StaffRoles { get; set; }

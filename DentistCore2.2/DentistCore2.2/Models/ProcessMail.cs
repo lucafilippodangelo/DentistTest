@@ -29,13 +29,13 @@ namespace MailClassLibrary
             client.Host = "smtp.gmail.com";
             client.Port = 587;
 
-            System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("mfmitteam@gmail.com", "xdapnuqdhznnimqo");
+            System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("canto@lucadangelo.it", "De7t!belli");
 
             client.UseDefaultCredentials = false;
             client.Credentials = credentials;
             MailMessage msg = new MailMessage();
 
-            msg.From = new MailAddress("mfmitteam@gmail.com");
+            msg.From = new MailAddress("canto@lucadangelo.it");
 
             msg.To.Add(new MailAddress(emailid));
             msg.Subject = subject;

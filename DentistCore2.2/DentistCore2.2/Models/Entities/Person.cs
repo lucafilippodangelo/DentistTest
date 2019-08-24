@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class Person
+    public class Person : IdentityUser<Guid>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public override Guid Id { get; set; }
 
         [Required]
         [StringLength(150)]
@@ -27,8 +28,5 @@ namespace LdDevWebApp.Models.Entities
         [StringLength(1000)]
         public string Note { get; set; }
 
-        [EmailAddress]
-        [Required]
-        public string Mail { get; set; }
     }
 }

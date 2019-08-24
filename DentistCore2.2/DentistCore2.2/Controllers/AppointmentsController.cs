@@ -12,16 +12,25 @@ using System.Collections;
 using DentistCore2._2.Data;
 using System.Threading;
 using DentistCore2._2.SignalR;
+using MailClassLibrary;
+using Microsoft.AspNetCore.Authorization;
+using DentistCore2._2.Models;
+using DentistCore2._2.Utilities;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 
 namespace LdDevWebApp.Controllers
 {
-    public class AppointmentsController : BaseController
+    public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+
+        private readonly IViewRenderService _viewRenderService;
+
         List<Appointment> letsSee;
-        public AppointmentsController(ApplicationDbContext context)
+        public AppointmentsController(ApplicationDbContext context, IViewRenderService viewRenderService)
         {
             _context = context;
+            _viewRenderService = viewRenderService;
         }
 
         // GET: Appointments
@@ -61,17 +70,41 @@ namespace LdDevWebApp.Controllers
             }
             else {
                 appointment.setAptStateObject();
+
+                //LD NEED TO BE ASYNC
+                //Utility.SendMailTest(new List<UserActions>() { new UserActions {  actionId = 1, content = "link to confirm"},
+                //new UserActions {  actionId = 2, content = "link to cancel"},
+                //new UserActions {  actionId = 3, content = "link to call me back"}}
+                //) ;
+
+                //LD START MAIL SENDING
+                var aCustomInfo = new CustomInfo { DateTime = DateTime.Now, ActionEnumerator = 1, AppointmentId = id.Value, InternalKey = "abc" };
+
+                //string Body = Rendering.RenderPartialToString("UserAct/Landing", aCustomInfo, this.ControllerContext, _viewEngine);
+                
+                try
+                {
+                    var Body = await _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
+                    ProcessMail.SendMail("info@lucadangelo.it", "Subject", Body);//(user.Email, subject, composedMail);
+                }
+                catch (Exception ex)
+                {
+                    var luca="";
+                    //CustomLogErrorStoring.storeErrorLog(ex, "User", "AdministrationUserCreateP", true);
+                }
+                //LD END MAIL SENDING
+
                 return View(appointment);
-            }
+        }
 
 
 
         }
 
         // GET: Appointments/Create
+        //[Authorize]
         public IActionResult Create()
         {
-            Success("All good");
             return View();
         }
 
@@ -89,15 +122,17 @@ namespace LdDevWebApp.Controllers
                 _context.Add(anAptLog);
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
 
-            Success("All good");
+                return RedirectToAction(nameof(Index));
+
+                
+            }
 
             return View(appointment);
         }
 
         // GET: Appointments/Edit/5
+        //[Authorize]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)

@@ -66,13 +66,14 @@
         }
 
     </tbody>
-    <div id="alert-placeholder" style="padding: 5px;">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+
 </table>
 
+<div id="alert-placeholder" style="padding: 5px;">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
 @section Scripts{
 
@@ -91,12 +92,11 @@
             var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             var encodedMsg = " says " + msg;
 
+
+
             console.log(" APPOINTMENT INDEX ---> " + encodedMsg);
 
-                  var alertHtml = '<div class="alert alert-' + alertTypeInput + ' " role="alert"><button type="button" class="close" data-dismiss="alert"><span>×</span></button><strong>' + user + '</strong> ' + encodedMsg + '</div>';
-
-
-
+            var alertHtml = '<div class="alert alert-' + alertTypeInput + '" role="alert"><button type="button" class="close" data-dismiss="alert"><span>×</span></button><strong>' + user + '</strong> ' + encodedMsg + '</div>';
             $(alertHtml)
                 .hide()                           //hide the newly created element (this is required for fadeIn to work)
                 .appendTo('#alert-placeholder')   //add it to the palceholder in the page

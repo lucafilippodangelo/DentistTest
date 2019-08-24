@@ -70,7 +70,7 @@ namespace LdDevWebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Phone,Mail,Note,StaffRoleID")] Staff staff)
+        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Phone,Email,Note,StaffRoleID")] Staff staff)
         {
             if (ModelState.IsValid)
             {
@@ -102,7 +102,7 @@ namespace LdDevWebApp.Controllers
         // POST: Staffs/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Surname,Phone,Mail,Note,StaffRoleID")] Staff staff)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Surname,Phone,Email,Note,StaffRoleID")] Staff staff)
         {
             if (id != staff.Id)
             {
