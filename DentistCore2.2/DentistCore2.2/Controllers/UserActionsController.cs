@@ -31,8 +31,10 @@ namespace WebApplication1.Controllers
 
         // GET: Appointments/Create
         //[Authorize]
-        public IActionResult Landing()
+        [Route("", Name = "Custom")]
+        public async Task<IActionResult> LandingStepOne()
         {
+            await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
             return View();
         }
 

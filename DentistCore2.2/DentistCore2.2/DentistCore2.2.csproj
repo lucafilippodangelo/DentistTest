@@ -7,6 +7,10 @@
     <RootNamespace>DentistCore2._2</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="Views\Shared\test.cshtml" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="AWSSDK" Version="2.3.55.2" />
@@ -27,6 +31,11 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="Views\Shared\test.cshtml" />
   </ItemGroup>
 
 

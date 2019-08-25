@@ -14,6 +14,7 @@ namespace MailClassLibrary
 
         public static void SendMail(string emailid, string subject, string body)
         {
+            throw new System.Exception("Throw Exception");
             Task t = Task.Run(() =>
             {
                 SendEmailInAThread(emailid, subject, body);

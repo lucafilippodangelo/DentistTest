@@ -17,43 +17,50 @@ using Microsoft.AspNetCore.Authorization;
 using DentistCore2._2.Models;
 using DentistCore2._2.Utilities;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.SignalR;
 
 namespace LdDevWebApp.Controllers
 {
+
     public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
         private readonly IViewRenderService _viewRenderService;
-
         List<Appointment> letsSee;
-        public AppointmentsController(ApplicationDbContext context, IViewRenderService viewRenderService)
+        private readonly IHubContext<AnHub> _hub;
+
+        public AppointmentsController(ApplicationDbContext context, IViewRenderService viewRenderService, IHubContext<AnHub> hubcontext)
         {
             _context = context;
             _viewRenderService = viewRenderService;
+            _hub = hubcontext;
         }
 
         // GET: Appointments
+        
         public async Task<IActionResult> Index()
         {
             //return View(await _context.Appointments.ToListAsync());
 
             var appointments = _context.Appointments.Include(app => app.Practise)
-            .OrderBy (app => app.When)
+            .OrderBy(app => app.When)
             .AsNoTracking()
-            .ToListAsync ()
+            .ToListAsync()
             ;
             letsSee = await appointments;
 
             //after retrieving from database then I set not mapped attributes
-            letsSee.ForEach(p => p.setAptStateObject ());
+            letsSee.ForEach(p => p.setAptStateObject());
 
             //Success("Loading index");
+            //if (mailSent == true) await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
 
             return View(letsSee);
         }
 
         // GET: Appointments/Details/5
+        //[ActionName("Appointments/Details")]
+        [Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -61,8 +68,8 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments.Include(a => a.AppointmentLogs).Include (a => a.Practise)
-                .Where(a => a.Id == id).SingleOrDefaultAsync ()
+            var appointment = await _context.Appointments.Include(a => a.AppointmentLogs).Include(a => a.Practise)
+                .Where(a => a.Id == id).SingleOrDefaultAsync()
                 ;
             if (appointment == null)
             {
@@ -78,10 +85,13 @@ namespace LdDevWebApp.Controllers
                 //) ;
 
                 //LD START MAIL SENDING
-                var aCustomInfo = new CustomInfo { DateTime = DateTime.Now, ActionEnumerator = 1, AppointmentId = id.Value, InternalKey = "abc" };
+                string urlAction = Url.Action("Details", "Appointments", new { id = id.Value }, "http");
+                string test = "Details/" + id.Value.ToString();
+
+                var aCustomInfo = new CustomInfo { DateTime = DateTime.Now, ActionEnumerator = 1, AppointmentId = id.Value, InternalKey = "abc", LandingLink = urlAction };
 
                 //string Body = Rendering.RenderPartialToString("UserAct/Landing", aCustomInfo, this.ControllerContext, _viewEngine);
-                
+
                 try
                 {
                     var Body = await _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
@@ -89,17 +99,101 @@ namespace LdDevWebApp.Controllers
                 }
                 catch (Exception ex)
                 {
-                    var luca="";
+                    var luca = "";
                     //CustomLogErrorStoring.storeErrorLog(ex, "User", "AdministrationUserCreateP", true);
                 }
                 //LD END MAIL SENDING
 
                 return View(appointment);
+            }
         }
 
 
+        /// <summary>
+        /// this is a sync method should not be used
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> SendMail(Guid? id)
+        {
 
+            //LD NEED TO BE ASYNC
+            //Utility.SendMailTest(new List<UserActions>() { new UserActions {  actionId = 1, content = "link to confirm"},
+            //new UserActions {  actionId = 2, content = "link to cancel"},
+            //new UserActions {  actionId = 3, content = "link to call me back"}}
+            //) ;
+
+            var appointment = await _context.Appointments.Where(a => a.Id == id).SingleOrDefaultAsync();
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                try
+                {
+                    string urlRoute = Url.RouteUrl("Custom", new { id = id.Value }, "http");
+                    var aCustomInfo = new CustomInfo { DateTime = DateTime.Now, ActionEnumerator = 1, AppointmentId = id.Value, InternalKey = "abc", LandingLink = urlRoute };
+                    var Body = await _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
+
+                    ProcessMail.SendMail("info@lucadangelo.it", "Subject", Body);
+
+                    appointment.UpdateStatus(AptStatusesEnum.st["MailSent"]);
+                }
+                catch (Exception ex)
+                {
+                    appointment.UpdateStatus(AptStatusesEnum.st["MailSendError"]);
+                }
+
+                _context.Update(appointment);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index");
         }
+
+        /// <summary>
+        /// this endpoint has to be called from ajax so no post to new action
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        //[Authorize]
+        public async void SendMailAsync(Guid? id)
+        {
+
+            //LD NEED TO BE ASYNC
+            //Utility.SendMailTest(new List<UserActions>() { new UserActions {  actionId = 1, content = "link to confirm"},
+            //new UserActions {  actionId = 2, content = "link to cancel"},
+            //new UserActions {  actionId = 3, content = "link to call me back"}}
+            //) ;
+
+            var appointment = _context.Appointments.Where(a => a.Id == id).SingleOrDefaultAsync();
+            if (appointment != null)
+            {
+      
+                //try
+                //{
+                //    string urlRoute = Url.RouteUrl("Custom", new { id = id.Value }, "http");
+                //    var aCustomInfo = new CustomInfo { DateTime = DateTime.Now, ActionEnumerator = 1, AppointmentId = id.Value, InternalKey = "abc", LandingLink = urlRoute };
+                //    var Body =  _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
+
+                //    ProcessMail.SendMail("info@lucadangelo.it", "Subject", Body);
+
+                //    appointment.UpdateStatus(AptStatusesEnum.st["MailSent"]);
+                //}
+                //catch (Exception ex)
+                //{
+                //    appointment.UpdateStatus(AptStatusesEnum.st["MailSendError"]);
+                //}
+
+                //_context.Update(appointment);
+                //_context.SaveChangesAsync();
+            }
+
+            await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
+        }
+
+
 
         // GET: Appointments/Create
         //[Authorize]
