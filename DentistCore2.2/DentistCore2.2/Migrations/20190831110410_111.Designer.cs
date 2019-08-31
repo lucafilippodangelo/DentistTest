@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DentistCore2._2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190818150736_u")]
-    partial class u
+    [Migration("20190831110410_111")]
+    partial class _111
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -141,49 +141,25 @@ namespace DentistCore2._2.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AccessFailedCount");
-
-                    b.Property<string>("ConcurrencyStamp");
-
                     b.Property<string>("Discriminator")
                         .IsRequired();
 
-                    b.Property<string>("Email");
-
-                    b.Property<bool>("EmailConfirmed");
-
-                    b.Property<bool>("LockoutEnabled");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150);
 
-                    b.Property<string>("NormalizedEmail");
-
-                    b.Property<string>("NormalizedUserName");
-
                     b.Property<string>("Note")
                         .HasMaxLength(1000);
 
-                    b.Property<string>("PasswordHash");
-
                     b.Property<string>("Phone");
-
-                    b.Property<string>("PhoneNumber");
-
-                    b.Property<bool>("PhoneNumberConfirmed");
-
-                    b.Property<string>("SecurityStamp");
 
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasMaxLength(150);
-
-                    b.Property<bool>("TwoFactorEnabled");
-
-                    b.Property<string>("UserName");
 
                     b.HasKey("Id");
 

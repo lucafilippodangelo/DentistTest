@@ -52,15 +52,12 @@ namespace LdDevWebApp.Controllers
             //after retrieving from database then I set not mapped attributes
             letsSee.ForEach(p => p.setAptStateObject());
 
-            //Success("Loading index");
-            //if (mailSent == true) await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
-
             return View(letsSee);
         }
 
         // GET: Appointments/Details/5
         //[ActionName("Appointments/Details")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -148,8 +145,9 @@ namespace LdDevWebApp.Controllers
                 _context.Update(appointment);
                 await _context.SaveChangesAsync();
             }
+            await _hub.Clients.All.SendAsync("ReceiveMessage", "POST IN CONTROLLER - NEED RELOADING", "SendMail", "danger");
 
-            return RedirectToAction("Index");
+            return NoContent();
         }
 
         /// <summary>

@@ -338,3 +338,4 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/DentistCore2.2/DentistCore2.2/Areas/Identity/IdentityHostingStartup.cs

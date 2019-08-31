@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace LdDevWebApp.Models.Entities
 {
-    public class Person : IdentityUser<Guid>
+    public class Person //: IdentityUser<Guid>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public override Guid Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [StringLength(150)]
@@ -27,6 +27,10 @@ namespace LdDevWebApp.Models.Entities
 
         [StringLength(1000)]
         public string Note { get; set; }
+
+        [Required]
+        [StringLength(150)]
+        public string Email { get; set; }
 
     }
 }
