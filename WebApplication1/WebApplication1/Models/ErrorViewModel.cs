@@ -1,6 +1,6 @@
 using System;
 
-namespace WebApplication1.Models
+namespace DentistCore2._2.Models
 {
     public class ErrorViewModel
     {

@@ -1,0 +1,33 @@
+<h1>CIAO MAMMA</h1>
+
+
+
+    <script type="text/javascript">
+
+        console.log(" APPOINTMENT INDEX ---> inside scripts");
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/anHub").build();
+
+        connection.start().then(function () {
+            console.log("APPOINTMENT INDEX ---> connection started");
+        });
+
+        connection.on("ReceiveMessage", function (user, message, alertTypeInput) {
+            var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var encodedMsg = " says " + msg;
+
+
+
+            console.log(" APPOINTMENT INDEX ---> " + encodedMsg);
+
+            var alertHtml = '<div class="alert alert-' + alertTypeInput + '" role="alert"><button type="button" class="close" data-dismiss="alert"><span>×</span></button><strong>' + user + '</strong> ' + encodedMsg + '</div>';
+            $(alertHtml)
+                .hide()                           //hide the newly created element (this is required for fadeIn to work)
+                .appendTo('#alert-placeholder')   //add it to the palceholder in the page
+                .fadeIn(1000);                     //little flair to grab user attention
+
+
+        });
+
+    </script>

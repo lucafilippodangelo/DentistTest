@@ -1,0 +1,112 @@
+﻿@model IEnumerable<LdDevWebApp.Models.Entities.Appointment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Patient
+            </th>
+            <th>
+                Staff
+            </th>
+            <th>
+                Treatment
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.When)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Practise)
+            </th>
+            <th>status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Patient.Name)
+                    @Html.DisplayFor(modelItem => item.Patient.Surname)
+                </td>
+                <td>
+                    ----- STAFF -----
+                </td>
+                <td>
+                    ----- TREATMENT -----
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.When.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Practise.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AptStateObject.AptStateDescription)
+                </td>
+                <td>
+                    <a class="btn btn-secondary" role="button" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a class="btn btn-secondary" role="button" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="btn btn-outline-danger" role="button" asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                    @if (item.AptStateObject.AptStateDescription == "Initial" || item.AptStateObject.AptStateDescription == "MailSendError" )
+                    {
+                       <a class="btn btn-primary" role="button" asp-action="SendMail" asp-route-id="@item.Id" onclick="return confirm('Are you sure you want to send the email?')">Send</a>
+                    }
+                    
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+<div id="alert-placeholder" style="padding: 5px;"> </div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        console.log(" APPOINTMENT INDEX ---> inside scripts");
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/anHub").build();
+
+        connection.start().then(function () {
+            console.log("APPOINTMENT INDEX ---> connection started");
+        });
+
+        connection.on("ReceiveMessage", function (user, message, alertTypeInput) {
+            var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var encodedMsg = " says " + msg;
+
+
+
+            console.log(" APPOINTMENT INDEX ---> " + encodedMsg);
+
+            var alertHtml = '<div class="alert alert-' + alertTypeInput + '" role="alert"><button type="button" class="close" data-dismiss="alert"><span>×</span></button><strong>' + user + '</strong> ' + encodedMsg + '</div>';
+            $(alertHtml)
+                .hide()                           //hide the newly created element (this is required for fadeIn to work)
+                .appendTo('#alert-placeholder')   //add it to the palceholder in the page
+                .fadeIn(1000);                     //little flair to grab user attention
+
+
+        });
+
+    </script>
+}

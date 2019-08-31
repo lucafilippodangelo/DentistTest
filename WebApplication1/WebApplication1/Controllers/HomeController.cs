@@ -4,17 +4,19 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Models;
+using DentistCore2._2.Models;
 
-namespace WebApplication1.Controllers
+namespace DentistCore2._2.Controllers
 {
     public class HomeController : Controller
     {
+        //LD I will use this index for notification
         public IActionResult Index()
         {
             return View();
         }
 
+       
         public IActionResult Privacy()
         {
             return View();
