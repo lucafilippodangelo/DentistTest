@@ -99,6 +99,14 @@ namespace LdDevWebApp.Models.Entities
             {
                 AptStateObject = new Canceled();
             }
+            else if (StatusID == AptStatusesEnum.st["MailSent"])
+            {
+                AptStateObject = new MailSent();
+            }
+            else if (StatusID == AptStatusesEnum.st["MailSendError"])
+            {
+                AptStateObject = new MailSendError();
+            }
         }
         #endregion
 

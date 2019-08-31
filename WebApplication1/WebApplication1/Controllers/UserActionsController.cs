@@ -24,20 +24,32 @@ namespace WebApplication1.Controllers
 
         // GET: Appointments/Create
         //[Authorize]
-        [Route("", Name = "Custom")]
-        public async Task<IActionResult> LandingStepOne()
+        [Route("", Name = "Confirm")]
+        public async Task<IActionResult> ConfirmAction()
         {
             await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
-            return View();
+            return View( "test");
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> LandingConfirm(int aNumber)//([Bind("Id,When,Notes")] Appointment appointment)
-        //{
+        // GET: Appointments/Create
+        //[Authorize]
+        [Route("", Name = "CallMeBack")]
+        public async Task<IActionResult> CallMeBackAction()
+        {
+            await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
+            return View("test");
+        }
 
-        //    return View();
-        //}
+        // GET: Appointments/Create
+        //[Authorize]
+        [Route("", Name = "Cancel")]
+        public async Task<IActionResult> CancelAction()
+        {
+            await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
+            return View("test");
+        }
+
+
 
         [HttpGet]
         public async Task SetCanceled()

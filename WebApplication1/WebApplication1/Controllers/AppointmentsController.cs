@@ -57,7 +57,7 @@ namespace LdDevWebApp.Controllers
 
         // GET: Appointments/Details/5
         //[ActionName("Appointments/Details")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -75,31 +75,6 @@ namespace LdDevWebApp.Controllers
             else {
                 appointment.setAptStateObject();
 
-                //LD NEED TO BE ASYNC
-                //Utility.SendMailTest(new List<UserActions>() { new UserActions {  actionId = 1, content = "link to confirm"},
-                //new UserActions {  actionId = 2, content = "link to cancel"},
-                //new UserActions {  actionId = 3, content = "link to call me back"}}
-                //) ;
-
-                //LD START MAIL SENDING
-                string urlAction = Url.Action("Details", "Appointments", new { id = id.Value }, "http");
-                string test = "Details/" + id.Value.ToString();
-
-                var aCustomInfo = new CustomInfo { DateTime = DateTime.Now, ActionEnumerator = 1, AppointmentId = id.Value, InternalKey = "abc", LandingLink = urlAction };
-
-                //string Body = Rendering.RenderPartialToString("UserAct/Landing", aCustomInfo, this.ControllerContext, _viewEngine);
-
-                try
-                {
-                    var Body = await _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
-                    ProcessMail.SendMail("info@lucadangelo.it", "Subject", Body);//(user.Email, subject, composedMail);
-                }
-                catch (Exception ex)
-                {
-                    var luca = "";
-                    //CustomLogErrorStoring.storeErrorLog(ex, "User", "AdministrationUserCreateP", true);
-                }
-                //LD END MAIL SENDING
 
                 return View(appointment);
             }
@@ -129,70 +104,47 @@ namespace LdDevWebApp.Controllers
             {
                 try
                 {
-                    string urlRoute = Url.RouteUrl("Custom", new { id = id.Value }, "http");
-                    var aCustomInfo = new CustomInfo { DateTime = DateTime.Now, ActionEnumerator = 1, AppointmentId = id.Value, InternalKey = "abc", LandingLink = urlRoute };
-                    var Body = await _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
+                    //BUILD MAIL START
+                    //string urlRoute = Url.RouteUrl("Custom", new { id = id.Value }, "https");
 
+                    string urlRouteConfirm = Url.RouteUrl("Confirm", new { id = id.Value}, "https");
+                    string urlRouteCallMeBack = Url.RouteUrl("CallMeBack", new { id = id.Value}, "https");
+                    string urlRouteCancel = Url.RouteUrl("Cancel", new { id = id.Value}, "https");
+
+                    var aCustomInfo = new CustomInfo {
+                        DateTime = DateTime.Now,
+                        ActionEnumerator = 1,
+                        AppointmentId = id.Value,
+                        InternalKey = "abc",
+                        urlRouteConfirm = urlRouteConfirm,
+                        urlRouteCallMaBack = urlRouteCallMeBack,
+                        urlRouteCancel = urlRouteCancel
+                    };
+
+                    var Body = await _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
+                    //BUILD MAIL END
                     ProcessMail.SendMail("info@lucadangelo.it", "Subject", Body);
 
                     appointment.UpdateStatus(AptStatusesEnum.st["MailSent"]);
+
+                    //LINK TO BE CREATED!!
+                    await _hub.Clients.All.SendAsync("ReceiveMessage", "<a href='#'class='alert-link'>an example link</a>", "SendMail", "success");
                 }
                 catch (Exception ex)
                 {
                     appointment.UpdateStatus(AptStatusesEnum.st["MailSendError"]);
+                    await _hub.Clients.All.SendAsync("ReceiveMessage", "MAIL SENT ERROR", "SendMail", "danger");
                 }
 
                 _context.Update(appointment);
                 await _context.SaveChangesAsync();
             }
-            await _hub.Clients.All.SendAsync("ReceiveMessage", "POST IN CONTROLLER - NEED RELOADING", "SendMail", "danger");
+            
 
             return NoContent();
         }
 
-        /// <summary>
-        /// this endpoint has to be called from ajax so no post to new action
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        //[Authorize]
-        public async void SendMailAsync(Guid? id)
-        {
-
-            //LD NEED TO BE ASYNC
-            //Utility.SendMailTest(new List<UserActions>() { new UserActions {  actionId = 1, content = "link to confirm"},
-            //new UserActions {  actionId = 2, content = "link to cancel"},
-            //new UserActions {  actionId = 3, content = "link to call me back"}}
-            //) ;
-
-            var appointment = _context.Appointments.Where(a => a.Id == id).SingleOrDefaultAsync();
-            if (appointment != null)
-            {
-      
-                //try
-                //{
-                //    string urlRoute = Url.RouteUrl("Custom", new { id = id.Value }, "http");
-                //    var aCustomInfo = new CustomInfo { DateTime = DateTime.Now, ActionEnumerator = 1, AppointmentId = id.Value, InternalKey = "abc", LandingLink = urlRoute };
-                //    var Body =  _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
-
-                //    ProcessMail.SendMail("info@lucadangelo.it", "Subject", Body);
-
-                //    appointment.UpdateStatus(AptStatusesEnum.st["MailSent"]);
-                //}
-                //catch (Exception ex)
-                //{
-                //    appointment.UpdateStatus(AptStatusesEnum.st["MailSendError"]);
-                //}
-
-                //_context.Update(appointment);
-                //_context.SaveChangesAsync();
-            }
-
-            await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
-        }
-
-
-
+   
         // GET: Appointments/Create
         //[Authorize]
         public IActionResult Create()
