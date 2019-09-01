@@ -3,6 +3,7 @@ using DentistCore2._2.Data;
 using DentistCore2._2.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication1.Controllers
 {
@@ -11,8 +12,6 @@ namespace WebApplication1.Controllers
     [ApiController]
     public class UserActionsController : Controller
     {
-
-
         private readonly IHubContext<AnHub> _hub;
         private readonly ApplicationDbContext _context;
 
@@ -22,7 +21,7 @@ namespace WebApplication1.Controllers
             _hub = hubcontext;
         }
 
-        // GET: Appointments/Create
+        
         //[Authorize]
         [Route("", Name = "Confirm")]
         public async Task<IActionResult> ConfirmAction()
@@ -31,8 +30,8 @@ namespace WebApplication1.Controllers
             return View( "test");
         }
 
-        // GET: Appointments/Create
-        //[Authorize]
+        
+        [Authorize]
         [Route("", Name = "CallMeBack")]
         public async Task<IActionResult> CallMeBackAction()
         {
@@ -40,19 +39,9 @@ namespace WebApplication1.Controllers
             return View("test");
         }
 
-        // GET: Appointments/Create
-        //[Authorize]
+        [Authorize]
         [Route("", Name = "Cancel")]
         public async Task<IActionResult> CancelAction()
-        {
-            await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
-            return View("test");
-        }
-
-
-
-        [HttpGet]
-        public async Task SetCanceled()
         {
             ////the input will be encripted
 
@@ -66,31 +55,9 @@ namespace WebApplication1.Controllers
             //_context.Update(appointment);
             //await _context.SaveChangesAsync();
 
-
-
-
             await _hub.Clients.All.SendAsync("ReceiveMessage", "primo", "secondo", "danger");
-
-            // UPDATE LOGS -> "OBJECT XXXX STATUS UPDATED"
+            return View("test");
         }
-
-        //public void SetCallMeBack(Guid Apt)
-        //{
-        //    //the input will be encripted
-
-        //    //retrieve appointment
-
-        //    //just need to call "UpdateStatus" of the retrieved object
-        //}
-
-        //public void SetConfirmed(Guid Apt)
-        //{
-        //    //the input will be encripted
-
-        //    //retrieve appointment
-
-        //    //just need to call "UpdateStatus" of the retrieved object
-        //}
 
     }
 }

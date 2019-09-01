@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using DentistCore2._2.Utilities;
+using WebApplication1.Helpers;
+using WebApplication1.Services;
 
 namespace DentistCore2._2
 {
@@ -28,7 +30,9 @@ namespace DentistCore2._2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add Applciation Services
+            services.AddCors();
+
+            // LD this is for render HTML view
             services.AddScoped<IViewRenderService, ViewRenderService>();
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -36,6 +40,35 @@ namespace DentistCore2._2
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            // LD configure strongly typed settings objects. It needs matching "appsettings.json" property.
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            // LD configuring jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            // LD configuring DI for application services
+            services.AddScoped<IJwtAuthenticationService, JwtAuthenticationService>();
+
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
@@ -47,25 +80,6 @@ namespace DentistCore2._2
 
             //LD Adding SignalR
             services.AddSignalR();
-
-
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //.AddJwtBearer(options =>
-            //{
-            //    options.RequireHttpsMetadata = false;
-            //    options.SaveToken = true;
-            //    options.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        RequireExpirationTime = true,
-            //        ValidateIssuer = true, // Validate the server (ValidateIssuer = true) that generates the token.
-            //        ValidateAudience = true, // Validate the recipient of token is authorized to receive (ValidateAudience = true)
-            //        ValidateLifetime = true, // Check if token is not expired and the signing key of the issuer is valid (ValidateLifetime = true)
-            //        ValidateIssuerSigningKey = true, // Validate signature of the token (ValidateIssuerSigningKey = true)
-            //        ValidIssuer = Configuration["Jwt:Issuer"], // Additionally, specify the values for the issuer, audience, signing key. In this example, I have stored these values in appsettings.json file.
-            //        ValidAudience = Configuration["Jwt:Issuer"],
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-            //    };
-            //});
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -86,16 +100,24 @@ namespace DentistCore2._2
             }
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
+
             app.UseCookiePolicy();
 
             app.UseAuthentication();
 
-            //LD ignalR
+            //LD SignalR
             app.UseSignalR(routes =>
             {
                 routes.MapHub<AnHub>("/anHub");
             });
+
+            //LD global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             //LD jwt authentication
             app.UseAuthentication();
