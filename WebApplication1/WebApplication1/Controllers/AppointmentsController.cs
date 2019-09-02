@@ -18,10 +18,11 @@ using DentistCore2._2.Models;
 using DentistCore2._2.Utilities;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.SignalR;
+using SmartBreadcrumbs.Attributes;
 
 namespace LdDevWebApp.Controllers
 {
-
+    [DefaultBreadcrumb("My Home Page")]
     public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,6 +30,7 @@ namespace LdDevWebApp.Controllers
         List<Appointment> letsSee;
         private readonly IHubContext<AnHub> _hub;
 
+        
         public AppointmentsController(ApplicationDbContext context, IViewRenderService viewRenderService, IHubContext<AnHub> hubcontext)
         {
             _context = context;
@@ -36,8 +38,7 @@ namespace LdDevWebApp.Controllers
             _hub = hubcontext;
         }
 
-        // GET: Appointments
-        
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             //return View(await _context.Appointments.ToListAsync());
@@ -55,8 +56,6 @@ namespace LdDevWebApp.Controllers
             return View(letsSee);
         }
 
-        // GET: Appointments/Details/5
-        //[ActionName("Appointments/Details")]
         [Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -74,18 +73,17 @@ namespace LdDevWebApp.Controllers
             }
             else {
                 appointment.setAptStateObject();
-
-
                 return View(appointment);
             }
         }
 
 
         /// <summary>
-        /// this is a sync method should not be used
+        /// This method to send email for the specific appointment
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         public async Task<IActionResult> SendMail(Guid? id)
         {
 
@@ -100,7 +98,7 @@ namespace LdDevWebApp.Controllers
             {
                 return NotFound();
             }
-            else
+            else if (appointment.AptStateObject.GetType() == typeof(Initial) || appointment.AptStateObject.GetType() == typeof(MailSendError))
             {
                 try
                 {
@@ -138,21 +136,20 @@ namespace LdDevWebApp.Controllers
 
                 _context.Update(appointment);
                 await _context.SaveChangesAsync();
-            }
-            
+            }            
 
             return NoContent();
         }
 
    
-        // GET: Appointments/Create
-        //[Authorize]
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,When,Notes")] Appointment appointment)
         {
@@ -175,8 +172,8 @@ namespace LdDevWebApp.Controllers
             return View(appointment);
         }
 
-        // GET: Appointments/Edit/5
-        //[Authorize]
+
+        [Authorize]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -210,6 +207,7 @@ namespace LdDevWebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID")] Appointment appointment)
         {
@@ -243,7 +241,7 @@ namespace LdDevWebApp.Controllers
             return View(appointment);
         }
 
-        // GET: Appointments/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -261,7 +259,7 @@ namespace LdDevWebApp.Controllers
             return View(appointment);
         }
 
-        // POST: Appointments/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

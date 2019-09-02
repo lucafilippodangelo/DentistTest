@@ -15,6 +15,7 @@ using System.Text;
 using DentistCore2._2.Utilities;
 using WebApplication1.Helpers;
 using WebApplication1.Services;
+using SmartBreadcrumbs.Extensions;
 
 namespace DentistCore2._2
 {
@@ -30,7 +31,7 @@ namespace DentistCore2._2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            //services.AddCors();
 
             // LD this is for render HTML view
             services.AddScoped<IViewRenderService, ViewRenderService>();
@@ -45,6 +46,16 @@ namespace DentistCore2._2
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddDefaultUI(UIFramework.Bootstrap4)
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //IMPORTANT, if I uncomment JWT, the normal login will not work
+            /*
             // LD configuring jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
@@ -68,18 +79,12 @@ namespace DentistCore2._2
 
             // LD configuring DI for application services
             services.AddScoped<IJwtAuthenticationService, JwtAuthenticationService>();
-
-
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            */
 
             //LD Adding SignalR
             services.AddSignalR();
+
+            services.AddBreadcrumbs(GetType().Assembly);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -98,6 +103,9 @@ namespace DentistCore2._2
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            //LD jwt authentication
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
 
@@ -118,9 +126,6 @@ namespace DentistCore2._2
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-
-            //LD jwt authentication
-            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

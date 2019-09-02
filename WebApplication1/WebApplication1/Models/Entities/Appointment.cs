@@ -26,7 +26,7 @@ namespace LdDevWebApp.Models.Entities
 
         [Required]
         [DataType(DataType.DateTime)] //LD save date and time
-        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy HH:mm}")]
         public DateTime When { get; set; } // Scheduled Date Time
 
         public string Notes { get; set; } //to be used if "treatmentType" not listed

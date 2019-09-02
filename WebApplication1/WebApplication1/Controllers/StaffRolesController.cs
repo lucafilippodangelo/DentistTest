@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 using LdDevWebApp.Models.Entities;
 using DentistCore2._2.Data;
+using SmartBreadcrumbs.Attributes;
 
 namespace LdDevWebApp.Controllers
 {
@@ -20,13 +21,13 @@ namespace LdDevWebApp.Controllers
             _context = context;
         }
 
-        // GET: StaffRoles
+        [Breadcrumb("Staff Roles")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.StaffRoles.ToListAsync());
         }
 
-        // GET: StaffRoles/Details/5
+        [Breadcrumb("Details", FromAction = "Index")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -44,15 +45,13 @@ namespace LdDevWebApp.Controllers
             return View(staffRole);
         }
 
-        // GET: StaffRoles/Create
+        [Breadcrumb("Create", FromAction = "Index")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: StaffRoles/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Breadcrumb("Create", FromAction = "Index")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Role,Note")] StaffRole staffRole)
@@ -67,7 +66,7 @@ namespace LdDevWebApp.Controllers
             return View(staffRole);
         }
 
-        // GET: StaffRoles/Edit/5
+        [Breadcrumb("Edit", FromAction = "Index")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -83,9 +82,7 @@ namespace LdDevWebApp.Controllers
             return View(staffRole);
         }
 
-        // POST: StaffRoles/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Breadcrumb("Edit", FromAction = "Index")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Role,Note")] StaffRole staffRole)
@@ -118,7 +115,7 @@ namespace LdDevWebApp.Controllers
             return View(staffRole);
         }
 
-        // GET: StaffRoles/Delete/5
+        [Breadcrumb("Delete", FromAction = "Index")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -136,7 +133,7 @@ namespace LdDevWebApp.Controllers
             return View(staffRole);
         }
 
-        // POST: StaffRoles/Delete/5
+        [Breadcrumb("Delete", FromAction = "Index")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
