@@ -55,7 +55,7 @@ namespace DentistCore2._2
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             //IMPORTANT, if I uncomment JWT, the normal login will not work
-            /*
+            /* 
             // LD configuring jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
@@ -76,10 +76,11 @@ namespace DentistCore2._2
                     ValidateAudience = false
                 };
             });
+*/
 
             // LD configuring DI for application services
             services.AddScoped<IJwtAuthenticationService, JwtAuthenticationService>();
-            */
+           
 
             //LD Adding SignalR
             services.AddSignalR();
@@ -92,6 +93,9 @@ namespace DentistCore2._2
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            //LD jwt authentication
+            app.UseAuthentication();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -104,16 +108,11 @@ namespace DentistCore2._2
                 app.UseHsts();
             }
 
-            //LD jwt authentication
-            app.UseAuthentication();
-
             app.UseHttpsRedirection();
 
-            app.UseStaticFiles();
+            app.UseStaticFiles();  //LD all javascript and CSS will be served to the browser
 
             app.UseCookiePolicy();
-
-            app.UseAuthentication();
 
             //LD SignalR
             app.UseSignalR(routes =>

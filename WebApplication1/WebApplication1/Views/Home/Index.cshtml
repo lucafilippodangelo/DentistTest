@@ -70,9 +70,11 @@
             var user = document.getElementById("userInput").value;
             var message = document.getElementById("messageInput").value;
             var alertTypeInput = document.getElementById("alertTypeInput").value;
+
             connection.invoke("SendMessage", user, message, alertTypeInput).catch(function (err) {
                 return console.error(err.toString());
             });
+
             event.preventDefault();
         });
 

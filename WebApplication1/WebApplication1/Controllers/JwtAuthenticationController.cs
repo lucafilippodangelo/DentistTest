@@ -45,12 +45,14 @@ namespace WebApplication1.Controllers
          JwtAuthentication/getall - secure route that accepts HTTP GET requests and returns a list of all the users in the application if the HTTP Authorization header contains a valid JWT token. 
          If there is no auth token or the token is invalid then a 401 Unauthorized response is returned.
          */
+         
         [HttpGet("getall")]
-            public IActionResult GetAll()
-            {
-                var users = _authSer.GetAll();
-                return Ok(users);
-            }
+        [Authorize(Roles = "aPatient")] //It works because the token has setup this role. 
+        public IActionResult GetAll()
+        {
+            var users = _authSer.GetAll();
+            return Ok(users);
+        }
         }
     
 }
