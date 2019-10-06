@@ -38,12 +38,12 @@ namespace LdDevWebApp.Controllers
             _hub = hubcontext;
         }
 
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Index()
         {
             //return View(await _context.Appointments.ToListAsync());
 
-            var appointments = _context.Appointments.Include(app => app.Practise)
+            var appointments = _context.Appointments.Include(app => app.Practise).Include(a=>a.Patient)
             .OrderBy(app => app.When)
             .AsNoTracking()
             .ToListAsync()
@@ -56,7 +56,7 @@ namespace LdDevWebApp.Controllers
             return View(letsSee);
         }
 
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -83,7 +83,7 @@ namespace LdDevWebApp.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> SendMail(Guid? id)
         {
 
@@ -142,14 +142,17 @@ namespace LdDevWebApp.Controllers
         }
 
    
-        [Authorize]
+        //[Authorize]
         public IActionResult Create()
         {
+            // add informations to select a patient
+            ViewBag.Patients = new MultiSelectList(_context.Patient, "Id", "Role");
             return View();
+
         }
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,When,Notes")] Appointment appointment)
         {
@@ -173,7 +176,7 @@ namespace LdDevWebApp.Controllers
         }
 
 
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -207,7 +210,7 @@ namespace LdDevWebApp.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID")] Appointment appointment)
         {
@@ -241,7 +244,7 @@ namespace LdDevWebApp.Controllers
             return View(appointment);
         }
 
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -259,7 +262,7 @@ namespace LdDevWebApp.Controllers
             return View(appointment);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

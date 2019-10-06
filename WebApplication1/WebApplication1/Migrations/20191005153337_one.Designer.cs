@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace WebApplication1.Data.Migrations
+namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190831141150_qq")]
-    partial class qq
+    [Migration("20191005153337_one")]
+    partial class one
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,7 +28,7 @@ namespace WebApplication1.Data.Migrations
 
                     b.Property<string>("Notes");
 
-                    b.Property<Guid?>("PatientId");
+                    b.Property<Guid>("PatientID");
 
                     b.Property<Guid?>("PractiseId");
 
@@ -38,7 +38,7 @@ namespace WebApplication1.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("PatientID");
 
                     b.HasIndex("PractiseId");
 
@@ -49,6 +49,7 @@ namespace WebApplication1.Data.Migrations
                         {
                             Id = new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"),
                             Notes = "Seeded Appointment One",
+                            PatientID = new Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"),
                             PractiseId = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"),
                             StatusID = new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"),
                             When = new DateTime(2019, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified)
@@ -57,6 +58,7 @@ namespace WebApplication1.Data.Migrations
                         {
                             Id = new Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"),
                             Notes = "Seeded Appointment Two",
+                            PatientID = new Guid("99b48598-b815-4d08-aa20-9492f41738ea"),
                             PractiseId = new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"),
                             StatusID = new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"),
                             When = new DateTime(2019, 6, 1, 14, 30, 0, 0, DateTimeKind.Unspecified)
@@ -382,6 +384,22 @@ namespace WebApplication1.Data.Migrations
                     b.HasBaseType("LdDevWebApp.Models.Entities.Person");
 
                     b.HasDiscriminator().HasValue("Patient");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"),
+                            Email = "sviluppo.dangelo@gmail.com",
+                            Name = "Patient one NAME",
+                            Surname = "Patient one Surname"
+                        },
+                        new
+                        {
+                            Id = new Guid("99b48598-b815-4d08-aa20-9492f41738ea"),
+                            Email = "info@lucadangelo.it",
+                            Name = "Patient two NAME",
+                            Surname = "Patient two Surname"
+                        });
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.Staff", b =>
@@ -399,7 +417,8 @@ namespace WebApplication1.Data.Migrations
                 {
                     b.HasOne("LdDevWebApp.Models.Entities.Patient", "Patient")
                         .WithMany("Appointments")
-                        .HasForeignKey("PatientId");
+                        .HasForeignKey("PatientID")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("LdDevWebApp.Models.Entities.Practise", "Practise")
                         .WithMany("Appointments")

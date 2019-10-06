@@ -8,6 +8,7 @@ namespace LdDevWebApp.Models.Entities
 {
     public class Patient : Person
     {
+        public string Nickname => Surname + Name;
         public ICollection<Appointment> Appointments { get; set; } //LD navigation Key
     }
 }
