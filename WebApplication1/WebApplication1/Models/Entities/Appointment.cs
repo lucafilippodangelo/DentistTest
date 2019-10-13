@@ -39,7 +39,7 @@ namespace LdDevWebApp.Models.Entities
 
         // =========================== Appointment FK fields ===========================
 
-        public Guid PatientID { get; set; } // FK to "Patient". I did create it manually by respecting conventions "table name"+"ID". This FK is useful for binding in controller
+        public Guid PatientID { get; set; } 
         public virtual Patient Patient { get; set; } //LD Appointment is for one specific patient. "virtual" to be enabled to lazy loading
 
         public virtual Practise Practise { get; set; } //LD Appointment happens in a specific Practise. EF will set by default convention the FK "PractiseId" in table. Use "PractiseId" when seeding 

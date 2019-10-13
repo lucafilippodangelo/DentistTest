@@ -159,12 +159,28 @@ namespace LdDevWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                appointment.Id = Guid.NewGuid();
-
                 IList<Guid> aPerList = new List<Guid>(Id);
-                
+                var aGuid = Guid.NewGuid();
+                appointment.Id = aGuid;
+
+                //TO BE REPLACED WITH THE INPUT PARM
+                appointment.PatientID = Guid.Parse("5B6C0AB6-C947-4279-9E35-53E2FA3CC1FF");
+
+                List<AppointmentStaff> anList = new List<AppointmentStaff>();
+                foreach (Guid ggg in Id)
+                {
+                    anList.Add(new AppointmentStaff
+                    {
+                        AppointmentId = aGuid,
+                        StaffId = ggg
+                    }) ;
+                }
+                appointment.AppointmentStaff = anList;
+
+
+
                 appointment.UpdateStatus (AptStatusesEnum.st["Initial"]);
-                _context.AddRange(appointment, aPerList);
+                _context.Add(appointment);
 
                 //LD Update Logs
                 AppointmentLog anAptLog = new AppointmentLog { Information = "created app id " + appointment.Id, When = DateTime.UtcNow ,  Appointment = appointment };
