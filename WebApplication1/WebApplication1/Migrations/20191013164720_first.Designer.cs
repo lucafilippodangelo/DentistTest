@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191005153337_one")]
-    partial class one
+    [Migration("20191013164720_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -116,24 +116,13 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentStaff", b =>
                 {
-                    b.Property<Guid>("giudAptId");
+                    b.Property<Guid>("AppointmentId");
 
-                    b.Property<Guid>("giudPersonId");
+                    b.Property<Guid>("StaffId");
 
-                    b.Property<Guid>("AppointmentStaffGiudId")
-                        .ValueGeneratedOnAdd();
+                    b.HasKey("AppointmentId", "StaffId");
 
-                    b.Property<Guid?>("appointmentId");
-
-                    b.Property<Guid?>("staffId");
-
-                    b.HasKey("giudAptId", "giudPersonId");
-
-                    b.HasAlternateKey("AppointmentStaffGiudId");
-
-                    b.HasIndex("appointmentId");
-
-                    b.HasIndex("staffId");
+                    b.HasIndex("StaffId");
 
                     b.ToTable("AppointmentStaff");
                 });
@@ -212,6 +201,20 @@ namespace WebApplication1.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StaffRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1a637f30-a003-48af-8f46-21328531e9c8"),
+                            Note = "Seeded staffRole one NOTE",
+                            Role = "Seeded staffRole one"
+                        },
+                        new
+                        {
+                            Id = new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b"),
+                            Note = "Seeded staffRole two NOTE",
+                            Role = "Seeded staffRole two"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -411,6 +414,24 @@ namespace WebApplication1.Migrations
                     b.HasIndex("StaffRoleID");
 
                     b.HasDiscriminator().HasValue("Staff");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"),
+                            Email = "sviluppo.dangelo@gmail.com",
+                            Name = "Seeded staff one NAME",
+                            Surname = "Seeded staff one Surname",
+                            StaffRoleID = new Guid("1a637f30-a003-48af-8f46-21328531e9c8")
+                        },
+                        new
+                        {
+                            Id = new Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"),
+                            Email = "info@lucadangelo.it",
+                            Name = "Seeded staff two NAME",
+                            Surname = "Seeded staff two Surname",
+                            StaffRoleID = new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b")
+                        });
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.Appointment", b =>
@@ -434,13 +455,15 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentStaff", b =>
                 {
-                    b.HasOne("LdDevWebApp.Models.Entities.Appointment", "appointment")
-                        .WithMany("StaffList")
-                        .HasForeignKey("appointmentId");
+                    b.HasOne("LdDevWebApp.Models.Entities.Appointment", "Appointment")
+                        .WithMany("AppointmentStaff")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("LdDevWebApp.Models.Entities.Staff", "staff")
-                        .WithMany()
-                        .HasForeignKey("staffId");
+                    b.HasOne("LdDevWebApp.Models.Entities.Staff", "Staff")
+                        .WithMany("AppointmentStaff")
+                        .HasForeignKey("StaffId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

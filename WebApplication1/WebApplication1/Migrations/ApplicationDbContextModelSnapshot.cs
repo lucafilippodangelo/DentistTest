@@ -114,24 +114,13 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentStaff", b =>
                 {
-                    b.Property<Guid>("giudAptId");
+                    b.Property<Guid>("AppointmentId");
 
-                    b.Property<Guid>("giudPersonId");
+                    b.Property<Guid>("StaffId");
 
-                    b.Property<Guid>("AppointmentStaffGiudId")
-                        .ValueGeneratedOnAdd();
+                    b.HasKey("AppointmentId", "StaffId");
 
-                    b.Property<Guid?>("appointmentId");
-
-                    b.Property<Guid?>("staffId");
-
-                    b.HasKey("giudAptId", "giudPersonId");
-
-                    b.HasAlternateKey("AppointmentStaffGiudId");
-
-                    b.HasIndex("appointmentId");
-
-                    b.HasIndex("staffId");
+                    b.HasIndex("StaffId");
 
                     b.ToTable("AppointmentStaff");
                 });
@@ -464,13 +453,15 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentStaff", b =>
                 {
-                    b.HasOne("LdDevWebApp.Models.Entities.Appointment", "appointment")
-                        .WithMany("StaffList")
-                        .HasForeignKey("appointmentId");
+                    b.HasOne("LdDevWebApp.Models.Entities.Appointment", "Appointment")
+                        .WithMany("AppointmentStaff")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("LdDevWebApp.Models.Entities.Staff", "staff")
-                        .WithMany()
-                        .HasForeignKey("staffId");
+                    b.HasOne("LdDevWebApp.Models.Entities.Staff", "Staff")
+                        .WithMany("AppointmentStaff")
+                        .HasForeignKey("StaffId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -32,5 +32,7 @@ namespace LdDevWebApp.Models.Entities
         [StringLength(150)]
         public string Email { get; set; }
 
+        public string Nickname => Surname + Name;
+
     }
 }

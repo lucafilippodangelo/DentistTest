@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApplication1.Migrations
 {
-    public partial class one : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -256,25 +256,21 @@ namespace WebApplication1.Migrations
                 name: "AppointmentStaff",
                 columns: table => new
                 {
-                    giudAptId = table.Column<Guid>(nullable: false),
-                    giudPersonId = table.Column<Guid>(nullable: false),
-                    AppointmentStaffGiudId = table.Column<Guid>(nullable: false),
-                    appointmentId = table.Column<Guid>(nullable: true),
-                    staffId = table.Column<Guid>(nullable: true)
+                    AppointmentId = table.Column<Guid>(nullable: false),
+                    StaffId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppointmentStaff", x => new { x.giudAptId, x.giudPersonId });
-                    table.UniqueConstraint("AK_AppointmentStaff_AppointmentStaffGiudId", x => x.AppointmentStaffGiudId);
+                    table.PrimaryKey("PK_AppointmentStaff", x => new { x.AppointmentId, x.StaffId });
                     table.ForeignKey(
-                        name: "FK_AppointmentStaff_Appointments_appointmentId",
-                        column: x => x.appointmentId,
+                        name: "FK_AppointmentStaff_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
                         principalTable: "Appointments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AppointmentStaff_Persons_staffId",
-                        column: x => x.staffId,
+                        name: "FK_AppointmentStaff_Persons_StaffId",
+                        column: x => x.StaffId,
                         principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -299,14 +295,31 @@ namespace WebApplication1.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Appointments",
-                columns: new[] { "Id", "Notes", "PatientID", "PractiseId", "StatusID", "When" },
-                values: new object[] { new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), "Seeded Appointment One", new Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"), new DateTime(2019, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) });
+                table: "StaffRoles",
+                columns: new[] { "Id", "Note", "Role" },
+                values: new object[,]
+                {
+                    { new Guid("1a637f30-a003-48af-8f46-21328531e9c8"), "Seeded staffRole one NOTE", "Seeded staffRole one" },
+                    { new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b"), "Seeded staffRole two NOTE", "Seeded staffRole two" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Appointments",
                 columns: new[] { "Id", "Notes", "PatientID", "PractiseId", "StatusID", "When" },
-                values: new object[] { new Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), "Seeded Appointment Two", new Guid("99b48598-b815-4d08-aa20-9492f41738ea"), new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"), new DateTime(2019, 6, 1, 14, 30, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[,]
+                {
+                    { new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), "Seeded Appointment One", new Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"), new DateTime(2019, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
+                    { new Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), "Seeded Appointment Two", new Guid("99b48598-b815-4d08-aa20-9492f41738ea"), new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"), new DateTime(2019, 6, 1, 14, 30, 0, 0, DateTimeKind.Unspecified) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Persons",
+                columns: new[] { "Id", "Discriminator", "Email", "Name", "Note", "Phone", "Surname", "StaffRoleID" },
+                values: new object[,]
+                {
+                    { new Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), "Staff", "sviluppo.dangelo@gmail.com", "Seeded staff one NAME", null, null, "Seeded staff one Surname", new Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
+                    { new Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), "Staff", "info@lucadangelo.it", "Seeded staff two NAME", null, null, "Seeded staff two Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
+                });
 
             migrationBuilder.InsertData(
                 table: "AppointmentLogs",
@@ -335,14 +348,9 @@ namespace WebApplication1.Migrations
                 column: "PractiseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppointmentStaff_appointmentId",
+                name: "IX_AppointmentStaff_StaffId",
                 table: "AppointmentStaff",
-                column: "appointmentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppointmentStaff_staffId",
-                table: "AppointmentStaff",
-                column: "staffId");
+                column: "StaffId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

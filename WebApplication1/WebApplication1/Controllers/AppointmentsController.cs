@@ -146,7 +146,8 @@ namespace LdDevWebApp.Controllers
         public IActionResult Create()
         {
             // add informations to select a patient
-            ViewBag.Patients = new MultiSelectList(_context.Patient, "Id", "Role");
+            ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "Nickname", new[] { Guid.Parse ("ee243d91-ddf1-48f6-827d-0bfa6616bae1") }); //sourse, Key, Value, Default array list
+
             return View();
 
         }
@@ -154,14 +155,18 @@ namespace LdDevWebApp.Controllers
         [HttpPost]
         //[Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,When,Notes")] Appointment appointment)
+        public async Task<IActionResult> Create([Bind("Id,When,Notes")] Appointment appointment, Guid[] Id)
         {
             if (ModelState.IsValid)
             {
                 appointment.Id = Guid.NewGuid();
-                appointment.UpdateStatus (AptStatusesEnum.st["Initial"]);
-                _context.Add(appointment);
 
+                IList<Guid> aPerList = new List<Guid>(Id);
+                
+                appointment.UpdateStatus (AptStatusesEnum.st["Initial"]);
+                _context.AddRange(appointment, aPerList);
+
+                //LD Update Logs
                 AppointmentLog anAptLog = new AppointmentLog { Information = "created app id " + appointment.Id, When = DateTime.UtcNow ,  Appointment = appointment };
                 _context.Add(anAptLog);
 
