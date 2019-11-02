@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191013164720_first")]
-    partial class first
+    [Migration("20191028122847_test")]
+    partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -420,7 +420,7 @@ namespace WebApplication1.Migrations
                         {
                             Id = new Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"),
                             Email = "sviluppo.dangelo@gmail.com",
-                            Name = "Seeded staff one NAME",
+                            Name = "Seeded staff one name",
                             Surname = "Seeded staff one Surname",
                             StaffRoleID = new Guid("1a637f30-a003-48af-8f46-21328531e9c8")
                         },
@@ -428,8 +428,24 @@ namespace WebApplication1.Migrations
                         {
                             Id = new Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"),
                             Email = "info@lucadangelo.it",
-                            Name = "Seeded staff two NAME",
+                            Name = "Seeded staff two name",
                             Surname = "Seeded staff two Surname",
+                            StaffRoleID = new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b")
+                        },
+                        new
+                        {
+                            Id = new Guid("f6ad3484-6916-4b5b-9a7e-5bbf69d9996a"),
+                            Email = "info@lucadangelo.it",
+                            Name = "Seeded staff three name",
+                            Surname = "Seeded staff three Surname",
+                            StaffRoleID = new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b")
+                        },
+                        new
+                        {
+                            Id = new Guid("567f81a6-ff37-4329-ae7b-3364f781700f"),
+                            Email = "info@lucadangelo.it",
+                            Name = "Seeded staff four name",
+                            Surname = "Seeded staff four Surname",
                             StaffRoleID = new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b")
                         });
                 });

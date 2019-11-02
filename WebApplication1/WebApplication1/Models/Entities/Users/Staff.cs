@@ -13,7 +13,7 @@ namespace LdDevWebApp.Models.Entities
         public virtual StaffRole StaffRole { get; set; }
 
         //[NotMapped]
-        public ICollection<AppointmentStaff> AppointmentStaff { get; set; }//public ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<AppointmentStaff> AppointmentStaff { get; set; }//public ICollection<Appointment> Appointments { get; set; }
     }
 }
 

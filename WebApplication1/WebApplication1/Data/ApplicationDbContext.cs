@@ -36,11 +36,12 @@ namespace DentistCore2._2.Data
             );
 
             mb.Entity<Staff>().HasData(
-            new { Id = new System.Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), Name = "Seeded staff one NAME", Surname = "Seeded staff one Surname", Email = "sviluppo.dangelo@gmail.com", Notes = "Seeded staff one NOTES", StaffRoleID = new System.Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
-            new { Id = new System.Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), Name = "Seeded staff two NAME", Surname = "Seeded staff two Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff two NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
+            new { Id = new System.Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), Name = "Seeded staff one name", Surname = "Seeded staff one Surname", Email = "sviluppo.dangelo@gmail.com", Notes = "Seeded staff one NOTES", StaffRoleID = new System.Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
+            new { Id = new System.Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), Name = "Seeded staff two name", Surname = "Seeded staff two Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff two NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
+            new { Id = new System.Guid("f6ad3484-6916-4b5b-9a7e-5bbf69d9996a"), Name = "Seeded staff three name", Surname = "Seeded staff three Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff three NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
+            new { Id = new System.Guid("567f81a6-ff37-4329-ae7b-3364f781700f"), Name = "Seeded staff four name", Surname = "Seeded staff four Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff four NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
             );
 
-            
             mb.Entity<Practise>().HasData(
                 new { Id = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise One", Notes = "Seeded Practise Note One" },
                 new { Id = new System.Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise Two", Notes = "Seeded Practise Note Two" }
@@ -66,11 +67,15 @@ namespace DentistCore2._2.Data
 
             //LD definition of the "Key" in the join tables
             mb.Entity<AppointmentStaff>().HasKey(t => new { t.AppointmentId, t.StaffId }); //LDNtoN
-            //LD setting delete behavior, reference -> https://www.learnentityframeworkcore.com/configuration/fluent-api/ondelete-method
-            mb.Entity<AppointmentStaff>().HasOne<Appointment>(m => m.Appointment).WithMany(p => p.AppointmentStaff).HasForeignKey(sc => sc.AppointmentId ).OnDelete(DeleteBehavior.Cascade);  //I use the relation to walk to "Appointment", once I'm sitting on it and I'm saying that on the delete of the "Appointment" do a cascade delete of the pointed "AppointmentStaff" records
-            mb.Entity<AppointmentStaff>().HasOne<Staff>(m => m.Staff).WithMany(p => p.AppointmentStaff).HasForeignKey(sc => sc.StaffId ).OnDelete(DeleteBehavior.Restrict); //I use the relation to walk to "Staff", once I'm sitting on it and I'm saying that on the delete of the "Staff" do a cascade delete of the pointed "AppointmentStaff" records
+            //I use the relation to walk to "Appointment" then back to "AppointmentStaff". Once the relation is defined I'm sitting on "AppointmentStaff" and I'm saying that on the delete of the "Appointment" I'm pointing with "AppointmentId" do a cascade delete of the related "AppointmentStaff" records
+            mb.Entity<AppointmentStaff>().HasOne<Appointment>(m => m.Appointment).WithMany(p => p.AppointmentStaff).HasForeignKey(sc => sc.AppointmentId ).OnDelete(DeleteBehavior.Cascade);
+            //I use the relation to walk to "Staff", once I'm sitting on it and I'm saying that on the delete of the "Staff" do a RESTRICT delete of the pointed "AppointmentStaff" records. It's not possible to do a double cascade delete.
+            mb.Entity<AppointmentStaff>().HasOne<Staff>(m => m.Staff).WithMany(p => p.AppointmentStaff).HasForeignKey(sc => sc.StaffId ).OnDelete(DeleteBehavior.Restrict);
 
 
+            /// REFERENCES
+            /// LD setting delete behavior, reference -> https://www.learnentityframeworkcore.com/configuration/fluent-api/ondelete-method
+            /// LD another reference https://www.thereformedprogrammer.net/updating-many-to-many-relationships-in-entity-framework-core/
         }
 
     }

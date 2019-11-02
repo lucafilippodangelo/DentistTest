@@ -46,13 +46,12 @@ namespace LdDevWebApp.Models.Entities
 
         public virtual ICollection<AppointmentLog> AppointmentLogs { get; set; } //LD 1toN - need of a setter "set;" to seed data in "AppointmentLog" seeding 
 
-        public ICollection<AppointmentStaff> AppointmentStaff { get; set; }//public ICollection<Staff> Staff { get; set; } //LD Appointment can have a list od staff
+        public virtual ICollection<AppointmentStaff> AppointmentStaff { get; set; }//public ICollection<Staff> Staff { get; set; } //LD Appointment can have a list od staff
 
         [NotMapped]
         public virtual ICollection<AppointmentTreatment> AppointmentTreatments { get; set; } //LD Appointment can have a list of treatments
 
         // =========================== Appointment status ===========================
-
 
         #region Status Patern
 

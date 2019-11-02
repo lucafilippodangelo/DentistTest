@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApplication1.Migrations
 {
-    public partial class first : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -317,8 +317,10 @@ namespace WebApplication1.Migrations
                 columns: new[] { "Id", "Discriminator", "Email", "Name", "Note", "Phone", "Surname", "StaffRoleID" },
                 values: new object[,]
                 {
-                    { new Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), "Staff", "sviluppo.dangelo@gmail.com", "Seeded staff one NAME", null, null, "Seeded staff one Surname", new Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
-                    { new Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), "Staff", "info@lucadangelo.it", "Seeded staff two NAME", null, null, "Seeded staff two Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
+                    { new Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), "Staff", "sviluppo.dangelo@gmail.com", "Seeded staff one name", null, null, "Seeded staff one Surname", new Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
+                    { new Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), "Staff", "info@lucadangelo.it", "Seeded staff two name", null, null, "Seeded staff two Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
+                    { new Guid("f6ad3484-6916-4b5b-9a7e-5bbf69d9996a"), "Staff", "info@lucadangelo.it", "Seeded staff three name", null, null, "Seeded staff three Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
+                    { new Guid("567f81a6-ff37-4329-ae7b-3364f781700f"), "Staff", "info@lucadangelo.it", "Seeded staff four name", null, null, "Seeded staff four Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
                 });
 
             migrationBuilder.InsertData(

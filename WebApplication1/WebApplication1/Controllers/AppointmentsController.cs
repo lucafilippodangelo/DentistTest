@@ -145,11 +145,9 @@ namespace LdDevWebApp.Controllers
         //[Authorize]
         public IActionResult Create()
         {
-            // add informations to select a patient
+            // add informations to select staff
             ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "Nickname", new[] { Guid.Parse ("ee243d91-ddf1-48f6-827d-0bfa6616bae1") }); //sourse, Key, Value, Default array list
-
             return View();
-
         }
 
         [HttpPost]
@@ -205,37 +203,49 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments.FindAsync(id);
-
+            //LD getting appointment by "Id" and related staff
+            //var appointment = _context.Appointments.Include(x => x.AppointmentStaff).Where (w => w.Id == id).Single();
+            var appointment = await _context.Appointments
+                                            .Include(x => x.AppointmentStaff)
+                                            .AsNoTracking().
+                                            FirstOrDefaultAsync(w => w.Id == id);
 
             if (appointment == null)
             {
                 return NotFound();
             }
             else {
-                appointment.setAptStateObject();
+                appointment.setAptStateObject();//appointment.setAptStateObject();
 
+                //LD managing the state of the appointment
                 var subKeyValue = AptStatusesEnum.st
                                   .Where(d => d.Value == AptStatusesEnum.st["Initial"] || d.Value == AptStatusesEnum.st["Aborted"])
                                   .ToList();
+
                 // 'SelectList' explanation: 
                 //parm -> 'inputlist' is 'subKeyValue'
                 //parm -> "my DATAVALUE in my dictionary is the 'Value' so the guid. it is what will be returned as 'StatusID' in post edit"
                 //parm -> "my DATATEXT in my dictionary is the 'Key' so the text like 'Initial' "
                 //parm -> "appointment.StatusID" is the default value that has to match DATAVALUE type
+
                 ViewData["AptStatus"] = new SelectList(subKeyValue, "Value", "Key", appointment.StatusID.ToString ());
+
+
+                //LD managing the staff for the appointment
+                var listSelectedStaffIds = appointment.AppointmentStaff.Select(s => s.StaffId).ToList();
+                ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "Nickname", listSelectedStaffIds); //source, Key, Value, Default 
+
                 return View(appointment);
             }
-           
             
         }
 
         [HttpPost]
         //[Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID")] Appointment appointment)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID")] Appointment aptBind, Guid[] staffSelectedAptBind)
         {
-            if (id != appointment.Id)
+            if (id != aptBind.Id)
             {
                 return NotFound();
             }
@@ -244,25 +254,28 @@ namespace LdDevWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(appointment);
-                    AppointmentLog anAptLog = new AppointmentLog { Information = "UPDATED app " + appointment.Id, When = DateTime.UtcNow, Appointment = appointment };
+
+                    UpdateAppointmentStaff(staffSelectedAptBind, aptBind);
+
+                    AppointmentLog anAptLog = new AppointmentLog { Information = "UPDATED app " + aptBind.Id, When = DateTime.UtcNow, Appointment = aptBind };
                     _context.Add(anAptLog);
+
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!AppointmentExists(appointment.Id))
+                    if (!AppointmentExists(aptBind.Id))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError("", "Unable to save changes. ");
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(appointment);
+            return View(aptBind);
         }
 
         //[Authorize]
@@ -299,5 +312,61 @@ namespace LdDevWebApp.Controllers
         {
             return _context.Appointments.Any(e => e.Id == id);
         }
+
+        //================================================================
+        /// <summary>
+        /// This method updates the appointment related "Staff" Entity
+        /// 
+        /// https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/update-related-data?view=aspnetcore-2.2
+        /// </summary>
+        /// <param name="SelectedAptStaff"></param>
+        /// <param name="aptToUpdate"></param>
+        //================================================================
+        private void UpdateAppointmentStaff(Guid[] staffSelectedAptBind, Appointment aptBind)
+        {
+
+            //LD the query below is useful only to retrieve the currently staff saved in database for the appointment in context 
+            var currentDbApt = _context.Appointments
+                        .Include(x => x.AppointmentStaff)
+                        .ThenInclude(x => x.Staff)
+                        .FirstOrDefault(w => w.Id == aptBind.Id);
+
+            //LD just binding what received in input (when,notes,statisId)
+            currentDbApt.When = aptBind.When;
+            currentDbApt.Notes = aptBind.Notes ;
+            currentDbApt.StatusID = aptBind.StatusID ;
+
+            // the idea is to remove from the apt in context the existing staff list and replace with the currently replaced one.
+            if (staffSelectedAptBind == null)
+            {
+                aptBind.AppointmentStaff = new List<AppointmentStaff>();
+                return;
+            }
+
+            var staffSelectedAptBindHS = new HashSet<Guid>(staffSelectedAptBind); //the selected staff in edit
+            var currentDbAptStaffHS = new HashSet<Guid>(currentDbApt.AppointmentStaff.Select(c => c.Staff.Id )); //list of staff for the appointment
+
+            foreach (var aStaff in _context.Staff)
+            {
+                if (staffSelectedAptBindHS.Contains(aStaff.Id))
+                {
+                    if (!currentDbAptStaffHS.Contains(aStaff.Id))
+                        //then add in the appointment
+                        currentDbApt.AppointmentStaff.Add(new AppointmentStaff { AppointmentId = aptBind.Id, StaffId = aStaff.Id });
+                }
+                else 
+                if (currentDbAptStaffHS.Contains(aStaff.Id))
+                {
+                    //need to REMOVE FROM THE CONTEXT what not selected anymore 
+                    AppointmentStaff appointmentStaffToRemove = currentDbApt.AppointmentStaff.FirstOrDefault(i => i.StaffId == aStaff.Id);
+                    
+                    _context.Remove(appointmentStaffToRemove); // it was possible even to do -> //aptBind.AppointmentStaff.Remove(appointmentStaffToRemove);
+                }
+            }
+
+            //_context.Update(aptBind);
+
+        }
+
     }
 }

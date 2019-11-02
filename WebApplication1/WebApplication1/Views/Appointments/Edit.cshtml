@@ -37,6 +37,14 @@
                 <input asp-for="Notes" class="form-control" />
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
+            @*<div>
+                @Html.DropDownList("Id", ViewBag.Staff as MultiSelectList, new { multiple = "multiple" })
+            </div>*@
+            
+                <div >
+                    @Html.ListBox("staffSelectedAptBind", ViewBag.Staff as MultiSelectList, new { multiple = "multiple" })
+                </div>
+            
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
