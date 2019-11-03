@@ -10,6 +10,7 @@ namespace LdDevWebApp.Models.Entities
 {
     public class Person //: IdentityUser<Guid>
     {
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
@@ -32,7 +33,9 @@ namespace LdDevWebApp.Models.Entities
         [StringLength(150)]
         public string Email { get; set; }
 
-        public string Nickname => Surname + Name;
+        public bool IsActive { get; set; }
+
+        public string DisplayName => Surname + Name;
 
     }
 }

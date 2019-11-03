@@ -17,7 +17,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Patient.Nickname )
+                @Html.DisplayNameFor(model => model.Patient.DisplayName )
             </th>
             <th>
                 Staff
@@ -58,14 +58,26 @@
                     @Html.DisplayFor(modelItem => item.AptStateObject.AptStateDescription)
                 </td>
                 <td>
-                    <a class="btn btn-secondary" role="button" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a class="btn btn-secondary" role="button" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a class="btn btn-outline-danger" role="button" asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                    @if (item.AptStateObject.AptStateDescription == "Initial" || item.AptStateObject.AptStateDescription == "MailSendError" )
-                    {
-                       <a class="btn btn-primary" role="button" asp-action="SendMail" asp-route-id="@item.Id" onclick="return confirm('Are you sure you want to send the email?')">Send</a>
-                    }
+                    <div>
+
+                        <a class="btn btn-secondary" role="button" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    </div>
+                    <div>
+                        <a class="btn btn-secondary" role="button" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+
+                    </div>
+                    <div>
+
+                        @*<a class="btn btn-outline-danger" role="button" asp-action="Delete" asp-route-id="@item.Id">Delete</a> |*@
+                        @if (item.AptStateObject.AptStateDescription == "Initial" || item.AptStateObject.AptStateDescription == "MailSendError")
+                        {
+                            <a class="btn btn-primary" role="button" asp-action="SendMail" asp-route-id="@item.Id" onclick="return confirm('Are you sure you want to send the email?')">Send</a>
+                        }
+                    </div>
                     
+                    
+
+
 
                 </td>
             </tr>

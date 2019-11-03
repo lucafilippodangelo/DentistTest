@@ -39,7 +39,8 @@ namespace LdDevWebApp.Models.Entities
 
         // =========================== Appointment FK fields ===========================
 
-        public Guid PatientID { get; set; } 
+        [Required]
+        public Guid PatientID { get; set; } //specify this id is needed when querying appointment. Whith this we do not need to go down on the patient
         public virtual Patient Patient { get; set; } //LD Appointment is for one specific patient. "virtual" to be enabled to lazy loading
 
         public virtual Practise Practise { get; set; } //LD Appointment happens in a specific Practise. EF will set by default convention the FK "PractiseId" in table. Use "PractiseId" when seeding 

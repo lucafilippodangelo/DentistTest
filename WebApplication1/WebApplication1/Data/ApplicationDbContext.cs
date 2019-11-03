@@ -36,10 +36,10 @@ namespace DentistCore2._2.Data
             );
 
             mb.Entity<Staff>().HasData(
-            new { Id = new System.Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), Name = "Seeded staff one name", Surname = "Seeded staff one Surname", Email = "sviluppo.dangelo@gmail.com", Notes = "Seeded staff one NOTES", StaffRoleID = new System.Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
-            new { Id = new System.Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), Name = "Seeded staff two name", Surname = "Seeded staff two Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff two NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
-            new { Id = new System.Guid("f6ad3484-6916-4b5b-9a7e-5bbf69d9996a"), Name = "Seeded staff three name", Surname = "Seeded staff three Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff three NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
-            new { Id = new System.Guid("567f81a6-ff37-4329-ae7b-3364f781700f"), Name = "Seeded staff four name", Surname = "Seeded staff four Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff four NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
+            new { Id = new System.Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), IsActive = true, Name = "Seeded staff one name", Surname = "Seeded staff one Surname", Email = "sviluppo.dangelo@gmail.com", Notes = "Seeded staff one NOTES", StaffRoleID = new System.Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
+            new { Id = new System.Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), IsActive = true, Name = "Seeded staff two name", Surname = "Seeded staff two Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff two NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
+            new { Id = new System.Guid("f6ad3484-6916-4b5b-9a7e-5bbf69d9996a"), IsActive = true, Name = "Seeded staff three name", Surname = "Seeded staff three Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff three NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
+            new { Id = new System.Guid("567f81a6-ff37-4329-ae7b-3364f781700f"), IsActive = true, Name = "Seeded staff four name", Surname = "Seeded staff four Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff four NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
             );
 
             mb.Entity<Practise>().HasData(
@@ -48,8 +48,8 @@ namespace DentistCore2._2.Data
                 );
 
             mb.Entity<Patient>().HasData(
-            new { Id = new System.Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), Name = "Patient one NAME", Surname = "Patient one Surname", Email = "sviluppo.dangelo@gmail.com", Notes = "Patient one NOTES" }, 
-            new { Id = new System.Guid("99b48598-b815-4d08-aa20-9492f41738ea"), Name = "Patient two NAME", Surname = "Patient two Surname", Email = "info@lucadangelo.it", Notes = "Patient two NOTES" }
+            new { Id = new System.Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), IsActive = true, Name = "Patient one NAME", Surname = "Patient one Surname", Email = "sviluppo.dangelo@gmail.com", Notes = "Patient one NOTES" }, 
+            new { Id = new System.Guid("99b48598-b815-4d08-aa20-9492f41738ea"), IsActive = true, Name = "Patient two NAME", Surname = "Patient two Surname", Email = "info@lucadangelo.it", Notes = "Patient two NOTES" }
             );
 
             mb.Entity<Appointment>().HasData(

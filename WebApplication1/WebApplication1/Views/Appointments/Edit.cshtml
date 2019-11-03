@@ -24,13 +24,17 @@
             <input asp-for="AptStateObject.AptStateDescription" class="form-control" />
             <span asp-validation-for="AptStateObject.AptStateDescription" class="text-danger"></span>
         </div>*@
+            <div class="form-group">
+                <label asp-for="PatientID" class="control-label"></label>
+                <select asp-for="PatientID" class="form-control" asp-items="ViewBag.Patients"></select>
+            </div>
 
             <div class="form-group">
                 <label asp-for="StatusID" class="control-label"></label>
                 <select asp-for="StatusID" class="form-control" asp-items="ViewBag.AptStatus">
-                    @*<option value="StatusID">-- Set Appointment Status --</option>*@
                 </select>
             </div>
+
 
             <div class="form-group">
                 <label asp-for="Notes" class="control-label"></label>
@@ -38,13 +42,13 @@
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
             @*<div>
-                @Html.DropDownList("Id", ViewBag.Staff as MultiSelectList, new { multiple = "multiple" })
-            </div>*@
-            
-                <div >
-                    @Html.ListBox("staffSelectedAptBind", ViewBag.Staff as MultiSelectList, new { multiple = "multiple" })
-                </div>
-            
+            @Html.DropDownList("Id", ViewBag.Staff as MultiSelectList, new { multiple = "multiple" })
+        </div>*@
+
+            <div>
+                @Html.ListBox("staffSelectedAptBind", ViewBag.Staff as MultiSelectList, new { multiple = "multiple" })
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
