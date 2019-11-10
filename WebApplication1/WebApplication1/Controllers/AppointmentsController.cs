@@ -43,7 +43,7 @@ namespace LdDevWebApp.Controllers
         {
             //return View(await _context.Appointments.ToListAsync());
 
-            var appointments = _context.Appointments.Include(app => app.Practise).Include(a=>a.Patient)
+            var appointments = _context.Appointments.Include(app => app.Practise).AsNoTracking().Include(a=>a.Patient).AsNoTracking ()
             .OrderBy(app => app.When)
             .AsNoTracking()
             .ToListAsync()
@@ -150,48 +150,59 @@ namespace LdDevWebApp.Controllers
 
             // add info to select "IsActive" patients
             ViewData["Patients"] = new SelectList(_context.Patient.Where(p => p.IsActive == true), "Id", "DisplayName");
+
+            // add info to select "IsActive" patients
+            ViewData["Practises"] = new SelectList(_context.Practises.Where(p => p.IsActive == true), "Id", "Name");
+
             return View();
         }
 
         [HttpPost]
         //[Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,When,Notes,PatientID,")] Appointment appointment, Guid[] Id)
+        public async Task<IActionResult> Create([Bind("Id,When,Notes,Patient,Practise")] Appointment aptBind, Guid[] Id)
         {
+            //Got rid of model validations for "Patient", once just the Id is returned and I do not need to run any check at this stage
+            ModelState.Remove("Patient.Name");
+            ModelState.Remove("Patient.Email");
+            ModelState.Remove("Patient.Surname");
             if (ModelState.IsValid)
             {
-                IList<Guid> aPerList = new List<Guid>(Id);
-                var aGuid = Guid.NewGuid();
-                appointment.Id = aGuid;
+                IList<Guid> aptStaffList = new List<Guid>(Id);
+
+                aptBind.Id = Guid.NewGuid();
 
                 // map staff for appointment
                 List<AppointmentStaff> anList = new List<AppointmentStaff>();
-                foreach (Guid ggg in Id)
+                foreach (Guid aGuidInList in aptStaffList)
                 {
                     anList.Add(new AppointmentStaff
                     {
-                        AppointmentId = aGuid,
-                        StaffId = ggg
+                        AppointmentId = aptBind.Id,
+                        StaffId = aGuidInList
                     }) ;
                 }
-                appointment.AppointmentStaff = anList;
+                aptBind.AppointmentStaff = anList;
 
+                aptBind.Patient = _context.Patient.FirstOrDefault(p => p.Id == aptBind.Patient.Id);
 
-                appointment.UpdateStatus (AptStatusesEnum.st["Initial"]);
-                _context.Add(appointment);
+                aptBind.Practise = _context.Practises .FirstOrDefault(p => p.Id == aptBind.Practise.Id);
+
+                aptBind.UpdateStatus (AptStatusesEnum.st["Initial"]);
+
+                _context.Add(aptBind);
 
                 //LD Update Logs
-                AppointmentLog anAptLog = new AppointmentLog { Information = "created app id " + appointment.Id, When = DateTime.UtcNow ,  Appointment = appointment };
+                AppointmentLog anAptLog = new AppointmentLog { Information = "created app id " + aptBind.Id, When = DateTime.UtcNow ,  Appointment = aptBind };
                 _context.Add(anAptLog);
 
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
 
-                
             }
 
-            return View(appointment);
+            return View(aptBind);
         }
 
 
@@ -207,9 +218,9 @@ namespace LdDevWebApp.Controllers
             //var appointment = _context.Appointments.Include(x => x.AppointmentStaff).Where (w => w.Id == id).Single();
             var appointment = await _context.Appointments
                                             .Include(x => x.AppointmentStaff)
-                                            .Include (p => p.Patient )
-                                            .AsNoTracking().
-                                            FirstOrDefaultAsync(w => w.Id == id);
+                                            .Include (pa => pa.Patient).AsNoTracking() //LD to avoid Key conflict when updating related entity in post
+                                            .Include(pr => pr.Practise).AsNoTracking() //LD to avoid Key conflict when updating related entity in post
+                                            .FirstOrDefaultAsync(w => w.Id == id);
 
             if (appointment == null)
             {
@@ -230,7 +241,10 @@ namespace LdDevWebApp.Controllers
                 ViewData["AptStatus"] = new SelectList(subKeyValue, "Value", "Key", appointment.StatusID.ToString ());
 
                 // managing patients for appointment with default
-                ViewData["Patients"] = new SelectList(_context.Patient.Where(p => p.IsActive == true), "Id", "DisplayName", appointment .PatientID.ToString ());
+                ViewData["Patients"] = new SelectList(_context.Patient.AsNoTracking ().Where(p => p.IsActive == true), "Id", "DisplayName", appointment.Patient.Id);
+
+                // add info to select "IsActive" patients
+                ViewData["Practises"] = new SelectList(_context.Practises.Where(p => p.IsActive == true), "Id", "Name", appointment.Practise.Id);
 
                 //LD managing the staff for the appointment
                 var listSelectedStaffIds = appointment.AppointmentStaff.Select(s => s.StaffId).ToList();
@@ -244,8 +258,13 @@ namespace LdDevWebApp.Controllers
         [HttpPost]
         //[Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID,PatientID")] Appointment aptBind, Guid[] staffSelectedAptBind)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID,Patient,Practise")] Appointment aptBind, Guid[] staffSelectedAptBind)
         {
+            //Got rid of model validations for "Patient", once just the Id is returned and I do not need to run any check at this stage
+            ModelState.Remove("Patient.Name");
+            ModelState.Remove("Patient.Email");
+            ModelState.Remove("Patient.Surname");
+
             if (id != aptBind.Id)
             {
                 return NotFound();
@@ -257,13 +276,18 @@ namespace LdDevWebApp.Controllers
                 ModelState.AddModelError("", "Unable to save changes if state is not 'Initial'");
             }
 
-
             if (ModelState.IsValid)
             {
                 try
                 {
 
                     UpdateAppointmentStaff(staffSelectedAptBind, aptBind);
+
+                    aptBind.Patient = _context.Patient.FirstOrDefault(pa => pa.Id == aptBind.Patient.Id);
+
+                    aptBind.Practise = _context.Practises.FirstOrDefault(pr => pr.Id == aptBind.Practise.Id);
+
+                    _context.Update(aptBind);
 
                     AppointmentLog anAptLog = new AppointmentLog { Information = "UPDATED app " + aptBind.Id, When = DateTime.UtcNow, Appointment = aptBind };
                     _context.Add(anAptLog);
@@ -291,7 +315,10 @@ namespace LdDevWebApp.Controllers
             ViewData["AptStatus"] = new SelectList(subKeyValue, "Value", "Key", aptBind.StatusID.ToString());
 
             // managing patients for appointment with default
-            ViewData["Patients"] = new SelectList(_context.Patient.Where(p => p.IsActive == true), "Id", "DisplayName", aptBind.PatientID.ToString());
+            ViewData["Patients"] = new SelectList(_context.Patient.Where(p => p.IsActive == true), "Id", "DisplayName", aptBind.Patient.Id.ToString());
+
+            // add info to select "IsActive" practises
+            ViewData["Practises"] = new SelectList(_context.Practises.Where(p => p.IsActive == true), "Id", "Name", aptBind.Practise.Id.ToString());
 
             //LD managing the staff for the appointment
             ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "DisplayName", staffSelectedAptBind); //source, Key, Value, Default 
@@ -333,7 +360,8 @@ namespace LdDevWebApp.Controllers
             return _context.Appointments.Any(e => e.Id == id);
         }
 
-        //================================================================
+        //========================================================================================================================
+
         /// <summary>
         /// This method updates the appointment related "Staff" Entity
         /// 
@@ -341,23 +369,22 @@ namespace LdDevWebApp.Controllers
         /// </summary>
         /// <param name="SelectedAptStaff"></param>
         /// <param name="aptToUpdate"></param>
-        //================================================================
         private void UpdateAppointmentStaff(Guid[] staffSelectedAptBind, Appointment aptBind)
         {
-
+            // ------------------------------------------------------------------------------------------------------------------------------------
             //LD the query below is useful only to retrieve the currently staff saved in database for the appointment in context 
-            var currentDbApt = _context.Appointments
+            var currentDbApt = _context.Appointments.AsNoTracking() //IMPORTANT to use "AsNoTracking()" to avoid conflicts when saving
                         .Include(x => x.AppointmentStaff)
                         .ThenInclude(x => x.Staff)
                         .FirstOrDefault(w => w.Id == aptBind.Id);
 
-            //LD just binding what received in input (when,notes,statisId)
+            //LD just binding what received in input on the main "Appointment" Object
             currentDbApt.When = aptBind.When;
             currentDbApt.Notes = aptBind.Notes;
             currentDbApt.StatusID = aptBind.StatusID;
-            currentDbApt.PatientID = aptBind.PatientID;
 
-            // the idea is to remove from the apt in context the existing staff list and replace with the currently replaced one.
+            // ------------------------------------------------------------------------------------------------------------------------------------
+            // LD need to update NtoN "AppointmentStaff". The idea is to remove from the apt in context the existing staff list and replace with the currently replaced one.
             if (staffSelectedAptBind == null)
             {
                 aptBind.AppointmentStaff = new List<AppointmentStaff>();
@@ -385,8 +412,6 @@ namespace LdDevWebApp.Controllers
                 }
             }
 
-            //_context.Update(aptBind);
-
         }
 
         /// <summary>
@@ -400,6 +425,8 @@ namespace LdDevWebApp.Controllers
         {
             //LD current appointment and related info
             var currentDbApt = _context.Appointments
+                        .Include(p => p.Patient).AsNoTracking()
+                        .Include(pr => pr.Practise).AsNoTracking()
                         .Include(x => x.AppointmentStaff)
                         .ThenInclude(x => x.Staff)
                         .FirstOrDefault(w => w.Id == aptBind.Id);
@@ -413,17 +440,17 @@ namespace LdDevWebApp.Controllers
                 if (staffSelectedAptBindHS != currentDbAptStaffHS)
                 {
                     dirty = true;
-                    ModelState.AddModelError("", "Impossible to update Staff Appointment");
+                    ModelState.AddModelError("", "Impossible to update Staff Appointment when State is not Initial");
                 }
-                if (aptBind.PatientID != currentDbApt.PatientID)
+                if (aptBind.Patient.Id != currentDbApt.Patient.Id)
                 {
                     dirty = true;
-                    ModelState.AddModelError("", "Impossible to update Patient");
+                    ModelState.AddModelError("", "Impossible to update Patient when State is not Initial");
                 }
                 if (aptBind.When != currentDbApt.When)
                 {
                     dirty = true;
-                    ModelState.AddModelError("", "Impossible to update Date Time");
+                    ModelState.AddModelError("", "Impossible to update Date Time when State is not Initial");
                 }
             }
             return dirty;

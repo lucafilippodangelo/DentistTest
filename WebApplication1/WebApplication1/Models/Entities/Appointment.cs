@@ -37,12 +37,14 @@ namespace LdDevWebApp.Models.Entities
         [NotMapped ]
         public virtual IAptStatus AptStateObject { get; set; }
 
-        // =========================== Appointment FK fields ===========================
+        // =========================== Appointment FK to Related Entities ===========================
 
         [Required]
-        public Guid PatientID { get; set; } //specify this id is needed when querying appointment. Whith this we do not need to go down on the patient
+        public virtual Guid PatientId { get; set; } //LD I leave this Key to be used in query. With this I avoid to retrieve the "Patient" and then it's "Id"
         public virtual Patient Patient { get; set; } //LD Appointment is for one specific patient. "virtual" to be enabled to lazy loading
 
+        [Required]
+        public virtual Guid PractiseId { get; set; } //LD I leave this Key to be used in query. With this I avoid to retrieve the "Practise" and then it's "Id"
         public virtual Practise Practise { get; set; } //LD Appointment happens in a specific Practise. EF will set by default convention the FK "PractiseId" in table. Use "PractiseId" when seeding 
 
         public virtual ICollection<AppointmentLog> AppointmentLogs { get; set; } //LD 1toN - need of a setter "set;" to seed data in "AppointmentLog" seeding 

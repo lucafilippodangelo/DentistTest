@@ -19,6 +19,8 @@ namespace LdDevWebApp.Models.Entities
 
         public string Notes { get; set; }
 
+        public bool IsActive { get; set; }
+
         public virtual ICollection<Appointment> Appointments { get; set; } //LD navigation Key
 
 

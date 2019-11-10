@@ -4,14 +4,16 @@ using DentistCore2._2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191103163049_terza")]
+    partial class terza
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,7 +30,7 @@ namespace WebApplication1.Migrations
 
                     b.Property<Guid>("PatientId");
 
-                    b.Property<Guid>("PractiseId");
+                    b.Property<Guid?>("PractiseId");
 
                     b.Property<Guid>("StatusID");
 
@@ -166,8 +168,6 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("Address");
 
-                    b.Property<bool>("IsActive");
-
                     b.Property<string>("Name");
 
                     b.Property<string>("Notes");
@@ -180,14 +180,12 @@ namespace WebApplication1.Migrations
                         new
                         {
                             Id = new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"),
-                            IsActive = true,
                             Name = "Practise One",
                             Notes = "Seeded Practise Note One"
                         },
                         new
                         {
                             Id = new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"),
-                            IsActive = true,
                             Name = "Practise Two",
                             Notes = "Seeded Practise Note Two"
                         });
@@ -469,8 +467,7 @@ namespace WebApplication1.Migrations
 
                     b.HasOne("LdDevWebApp.Models.Entities.Practise", "Practise")
                         .WithMany("Appointments")
-                        .HasForeignKey("PractiseId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("PractiseId");
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentLog", b =>

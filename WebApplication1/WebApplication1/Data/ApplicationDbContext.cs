@@ -43,8 +43,8 @@ namespace DentistCore2._2.Data
             );
 
             mb.Entity<Practise>().HasData(
-                new { Id = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise One", Notes = "Seeded Practise Note One" },
-                new { Id = new System.Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), Name = "Practise Two", Notes = "Seeded Practise Note Two" }
+                new { Id = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), IsActive = true, Name = "Practise One", Notes = "Seeded Practise Note One" },
+                new { Id = new System.Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), IsActive = true, Name = "Practise Two", Notes = "Seeded Practise Note Two" }
                 );
 
             mb.Entity<Patient>().HasData(
@@ -53,8 +53,8 @@ namespace DentistCore2._2.Data
             );
 
             mb.Entity<Appointment>().HasData(
-            new { Id = new System.Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), PatientID = new System.Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), When = new DateTime(2019, 5, 1, 8, 30, 52), Notes = "Seeded Appointment One", PractiseId = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), StatusID = AptStatusesEnum.st["Initial"] }, //01 May 2019 h8:30:52
-            new { Id = new System.Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), PatientID= new System.Guid("99b48598-b815-4d08-aa20-9492f41738ea"), When = new DateTime(2019, 6, 1, 14, 30, 00), Notes = "Seeded Appointment Two", PractiseId = new System.Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), StatusID = AptStatusesEnum.st["Initial"] } //01 Jun 2019 h14:30:00
+            new { Id = new System.Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), PatientId  = new System.Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), When = new DateTime(2019, 5, 1, 8, 30, 52), Notes = "Seeded Appointment One", PractiseId = new System.Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), StatusID = AptStatusesEnum.st["Initial"] }, //01 May 2019 h8:30:52
+            new { Id = new System.Guid("9022622f-7adf-44ed-9efa-d362d937b5b8"), PatientId = new System.Guid("99b48598-b815-4d08-aa20-9492f41738ea"), When = new DateTime(2019, 6, 1, 14, 30, 00), Notes = "Seeded Appointment Two", PractiseId = new System.Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), StatusID = AptStatusesEnum.st["Initial"] } //01 Jun 2019 h14:30:00
             );
 
             mb.Entity<AppointmentLog>().HasData(

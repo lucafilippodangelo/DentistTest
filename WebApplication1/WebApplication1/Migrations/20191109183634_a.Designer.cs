@@ -4,14 +4,16 @@ using DentistCore2._2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191109183634_a")]
+    partial class a
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,9 +28,9 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("Notes");
 
-                    b.Property<Guid>("PatientId");
+                    b.Property<Guid?>("PatientId");
 
-                    b.Property<Guid>("PractiseId");
+                    b.Property<Guid?>("PractiseId");
 
                     b.Property<Guid>("StatusID");
 
@@ -464,13 +466,11 @@ namespace WebApplication1.Migrations
                 {
                     b.HasOne("LdDevWebApp.Models.Entities.Patient", "Patient")
                         .WithMany("Appointments")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("PatientId");
 
                     b.HasOne("LdDevWebApp.Models.Entities.Practise", "Practise")
                         .WithMany("Appointments")
-                        .HasForeignKey("PractiseId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("PractiseId");
                 });
 
             modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentLog", b =>
