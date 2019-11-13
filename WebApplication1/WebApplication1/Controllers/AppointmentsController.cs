@@ -19,6 +19,7 @@ using DentistCore2._2.Utilities;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.SignalR;
 using SmartBreadcrumbs.Attributes;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace LdDevWebApp.Controllers
 {
@@ -43,7 +44,7 @@ namespace LdDevWebApp.Controllers
         {
             //return View(await _context.Appointments.ToListAsync());
 
-            var appointments = _context.Appointments.Include(app => app.Practise).AsNoTracking().Include(a=>a.Patient).AsNoTracking ()
+            var appointments = _context.Appointments.AsNoTracking().Include(app => app.Practise).AsNoTracking().Include(a=>a.Patient).AsNoTracking()
             .OrderBy(app => app.When)
             .AsNoTracking()
             .ToListAsync()
@@ -271,23 +272,14 @@ namespace LdDevWebApp.Controllers
             }
 
             // Business-Logic, need to check if state is not initial that: patient,practise,aptStaff,Threatments,when -> are not changed 
-            if (updatingNotAllowedFieldsForSelectedState(aptBind, staffSelectedAptBind))
-            {
-                ModelState.AddModelError("", "Unable to save changes if state is not 'Initial'");
-            }
-
+            // In case a model error is added
+            updatingNotAllowedFieldsForSelectedState(aptBind, staffSelectedAptBind);
+           
             if (ModelState.IsValid)
             {
                 try
                 {
-
-                    UpdateAppointmentStaff(staffSelectedAptBind, aptBind);
-
-                    aptBind.Patient = _context.Patient.FirstOrDefault(pa => pa.Id == aptBind.Patient.Id);
-
-                    aptBind.Practise = _context.Practises.FirstOrDefault(pr => pr.Id == aptBind.Practise.Id);
-
-                    _context.Update(aptBind);
+                    UpdateAppointment(staffSelectedAptBind, aptBind);
 
                     AppointmentLog anAptLog = new AppointmentLog { Information = "UPDATED app " + aptBind.Id, When = DateTime.UtcNow, Appointment = aptBind };
                     _context.Add(anAptLog);
@@ -322,6 +314,7 @@ namespace LdDevWebApp.Controllers
 
             //LD managing the staff for the appointment
             ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "DisplayName", staffSelectedAptBind); //source, Key, Value, Default 
+
             return View(aptBind);
         }
 
@@ -369,12 +362,14 @@ namespace LdDevWebApp.Controllers
         /// </summary>
         /// <param name="SelectedAptStaff"></param>
         /// <param name="aptToUpdate"></param>
-        private void UpdateAppointmentStaff(Guid[] staffSelectedAptBind, Appointment aptBind)
+        private void UpdateAppointment(Guid[] staffSelectedAptBind, Appointment aptBind)
         {
             // ------------------------------------------------------------------------------------------------------------------------------------
             //LD the query below is useful only to retrieve the currently staff saved in database for the appointment in context 
-            var currentDbApt = _context.Appointments.AsNoTracking() //IMPORTANT to use "AsNoTracking()" to avoid conflicts when saving
-                        .Include(x => x.AppointmentStaff)
+            var currentDbApt = _context.Appointments
+                .Include(pa => pa.Patient)
+                .Include(pr => pr.Practise)
+                .Include(x => x.AppointmentStaff)
                         .ThenInclude(x => x.Staff)
                         .FirstOrDefault(w => w.Id == aptBind.Id);
 
@@ -382,6 +377,9 @@ namespace LdDevWebApp.Controllers
             currentDbApt.When = aptBind.When;
             currentDbApt.Notes = aptBind.Notes;
             currentDbApt.StatusID = aptBind.StatusID;
+
+            currentDbApt.PatientId = aptBind.Patient.Id;
+            currentDbApt.PractiseId = aptBind.Practise.Id;
 
             // ------------------------------------------------------------------------------------------------------------------------------------
             // LD need to update NtoN "AppointmentStaff". The idea is to remove from the apt in context the existing staff list and replace with the currently replaced one.
@@ -412,11 +410,13 @@ namespace LdDevWebApp.Controllers
                 }
             }
 
+            _context.Update(currentDbApt);
+
         }
 
         /// <summary>
         /// This method checks when state is "not initial" that: patient,practise,aptStaff,Threatments,when -> are not changed 
-        /// returns true if some fields are changed
+        /// add modelState errors if some fields are changed when selecting "Aborted" 
         /// </summary>
         /// <param name="aptBind"></param>
         /// <param name="staffSelectedAptBind"></param>
@@ -424,7 +424,7 @@ namespace LdDevWebApp.Controllers
         private bool updatingNotAllowedFieldsForSelectedState(Appointment aptBind, Guid[] staffSelectedAptBind)
         {
             //LD current appointment and related info
-            var currentDbApt = _context.Appointments
+            var currentDbApt = _context.Appointments.AsNoTracking()
                         .Include(p => p.Patient).AsNoTracking()
                         .Include(pr => pr.Practise).AsNoTracking()
                         .Include(x => x.AppointmentStaff)
@@ -437,7 +437,7 @@ namespace LdDevWebApp.Controllers
                 var dirty = false;
             if (aptBind.StatusID != AptStatusesEnum.st["Initial"])
             {
-                if (staffSelectedAptBindHS != currentDbAptStaffHS)
+                if (!staffSelectedAptBindHS.Overlaps (currentDbAptStaffHS)) //if the two hashsets does not share the same content
                 {
                     dirty = true;
                     ModelState.AddModelError("", "Impossible to update Staff Appointment when State is not Initial");
