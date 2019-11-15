@@ -16,12 +16,12 @@ namespace LdDevWebApp.Models.Entities
 
 
         //If not using Fluent API I have to add -> [ForeignKey("Appointment")]
-        public Guid AppointmentId { get; set; }
+        public Guid AppointmentId { get; set; } //naming by convention
         public Appointment Appointment { get; set; } //Navigation property
 
 
         //If not using Fluent API I have to add -> [ForeignKey("Staff")] //once I'm not using conventions I need to specify that this is the FK for the navogation property "staff"
-        public Guid StaffId { get; set; }
+        public Guid StaffId { get; set; } //naming by convention
         public Staff Staff { get; set; } //Navigation property
 
 

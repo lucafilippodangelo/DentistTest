@@ -11,9 +11,7 @@ namespace LdDevWebApp.Models.Entities
     {
         public Guid StaffRoleID { get; set; } // FK to "StaffRole". I did create it manually by respecting conventions "table name"+"ID". This FK is useful for binding in controller
         public virtual StaffRole StaffRole { get; set; }
-
-        //[NotMapped]
-        public virtual ICollection<AppointmentStaff> AppointmentStaff { get; set; }//public ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<AppointmentStaff> AppointmentStaff { get; set; } //to join table
     }
 }
 

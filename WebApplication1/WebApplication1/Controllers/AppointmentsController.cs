@@ -42,13 +42,12 @@ namespace LdDevWebApp.Controllers
         //[Authorize]
         public async Task<IActionResult> Index()
         {
-            //return View(await _context.Appointments.ToListAsync());
 
-            var appointments = _context.Appointments.AsNoTracking().Include(app => app.Practise).AsNoTracking().Include(a=>a.Patient).AsNoTracking()
-            .OrderBy(app => app.When)
-            .AsNoTracking()
-            .ToListAsync()
-            ;
+            var appointments = _context.Appointments.AsNoTracking()
+                                       .Include(app => app.Practise).AsNoTracking()
+                                       .Include(a=>a.Patient).AsNoTracking()
+                                       .OrderBy(app => app.When)
+                                       .ToListAsync();
             letsSee = await appointments;
 
             //after retrieving from database then I set not mapped attributes
@@ -65,9 +64,11 @@ namespace LdDevWebApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments.Include(a => a.AppointmentLogs).Include(a => a.Practise)
-                .Where(a => a.Id == id).SingleOrDefaultAsync()
-                ;
+            var appointment = await _context.Appointments
+                                            .Include(a => a.AppointmentLogs)
+                                            .Include(a => a.Practise)
+                                            .Where(a => a.Id == id)
+                                            .SingleOrDefaultAsync();
             if (appointment == null)
             {
                 return NotFound();

@@ -51,8 +51,7 @@ namespace LdDevWebApp.Models.Entities
 
         public virtual ICollection<AppointmentStaff> AppointmentStaff { get; set; }//public ICollection<Staff> Staff { get; set; } //LD Appointment can have a list od staff
 
-        [NotMapped]
-        public virtual ICollection<AppointmentTreatment> AppointmentTreatments { get; set; } //LD Appointment can have a list of treatments
+        public virtual ICollection<AppointmentThreatment> AppointmentThreatment { get; set; } //LD Appointment can have a list of treatments
 
         // =========================== Appointment status ===========================
 

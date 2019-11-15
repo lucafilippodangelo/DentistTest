@@ -5,6 +5,7 @@ using LdDevWebApp.Models.Entities;
 using LdDevWebApp.Models.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using WebApplication1.Models.Entities;
 
 namespace DentistCore2._2.Data
 {
@@ -19,6 +20,7 @@ namespace DentistCore2._2.Data
         public DbSet<Practise> Practises { get; set; }
         public DbSet<Staff> Staff { get; set; } 
         public DbSet<AppointmentStaff> AppointmentStaff { get; set; } //LD NtoN
+        public DbSet<AppointmentThreatment> AppointmentTreatment { get; set; } //LD NtoN
         public DbSet<AppointmentLog> AppointmentLogs { get; set; } //LD 1toN
 
         public DbSet<LdDevWebApp.Models.Entities.Patient> Patient { get; set; }
@@ -40,6 +42,12 @@ namespace DentistCore2._2.Data
             new { Id = new System.Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), IsActive = true, Name = "Seeded staff two name", Surname = "Seeded staff two Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff two NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
             new { Id = new System.Guid("f6ad3484-6916-4b5b-9a7e-5bbf69d9996a"), IsActive = true, Name = "Seeded staff three name", Surname = "Seeded staff three Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff three NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
             new { Id = new System.Guid("567f81a6-ff37-4329-ae7b-3364f781700f"), IsActive = true, Name = "Seeded staff four name", Surname = "Seeded staff four Surname", Email = "info@lucadangelo.it", Notes = "Seeded staff four NOTES", StaffRoleID = new System.Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
+            );
+
+            mb.Entity<Threatment>().HasData(
+            new { Id = new System.Guid("75ea697a-9532-4592-b9e1-f6f010df2b3d"), IsActive = true, Name = "Seeded Treatment ONE", Duration = 30, Description = "Seeded Treatment ONE description" },
+            new { Id = new System.Guid("d769ef89-a0cd-4a0a-8e55-f8f1af709b57"), IsActive = true, Name = "Seeded Treatment TWO", Duration = 30, Description = "Seeded Treatment TWO description" },
+            new { Id = new System.Guid("d55797b7-de47-40f3-9b58-7a6b15aba521"), IsActive = true, Name = "Seeded Treatment THREE", Duration = 30, Description = "Seeded Treatment THREE description" }
             );
 
             mb.Entity<Practise>().HasData(
@@ -72,11 +80,22 @@ namespace DentistCore2._2.Data
             //I use the relation to walk to "Staff", once I'm sitting on it and I'm saying that on the delete of the "Staff" do a RESTRICT delete of the pointed "AppointmentStaff" records. It's not possible to do a double cascade delete.
             mb.Entity<AppointmentStaff>().HasOne<Staff>(m => m.Staff).WithMany(p => p.AppointmentStaff).HasForeignKey(sc => sc.StaffId ).OnDelete(DeleteBehavior.Restrict);
 
+            //LD AS ABOVE DONE FOR "AppointmentStaff", definition of the "Key" in the join tables
+            mb.Entity<AppointmentThreatment>().HasKey(t => new { t.AppointmentId, t.ThreatmentId }); //LDNtoN
+            //I use the relation to walk to "Appointment" then back to "AppointmentTreatment". Once the relation is defined I'm sitting on "AppointmentTreatment" and I'm saying that on the delete of the "Appointment" I'm pointing with "AppointmentId" do a cascade delete of the related "AppointmentTreatment" records
+            mb.Entity<AppointmentThreatment>().HasOne<Appointment>(m => m.Appointment).WithMany(p => p.AppointmentThreatment).HasForeignKey(sc => sc.AppointmentId).OnDelete(DeleteBehavior.Cascade);
+            //I use the relation to walk to "Treatment", once I'm sitting on it and I'm saying that on the delete of the "Staff" do a RESTRICT delete of the pointed "AppointmentTreatment" records. It's not possible to do a double cascade delete.
+            mb.Entity<AppointmentThreatment>().HasOne<Threatment>(m => m.Threatment).WithMany(p => p.AppointmentThreatment).HasForeignKey(sc => sc.ThreatmentId).OnDelete(DeleteBehavior.Restrict);
+
 
             /// REFERENCES
             /// LD setting delete behavior, reference -> https://www.learnentityframeworkcore.com/configuration/fluent-api/ondelete-method
             /// LD another reference https://www.thereformedprogrammer.net/updating-many-to-many-relationships-in-entity-framework-core/
         }
+
+
+
+        public DbSet<WebApplication1.Models.Entities.Threatment> Threatment { get; set; }
 
     }
 }

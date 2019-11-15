@@ -4,14 +4,16 @@ using DentistCore2._2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191115003625_g")]
+    partial class g
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,15 +127,15 @@ namespace WebApplication1.Migrations
                     b.ToTable("AppointmentStaff");
                 });
 
-            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentThreatment", b =>
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentTreatment", b =>
                 {
                     b.Property<Guid>("AppointmentId");
 
-                    b.Property<Guid>("ThreatmentId");
+                    b.Property<Guid>("TreatmentId");
 
-                    b.HasKey("AppointmentId", "ThreatmentId");
+                    b.HasKey("AppointmentId", "TreatmentId");
 
-                    b.HasIndex("ThreatmentId");
+                    b.HasIndex("TreatmentId");
 
                     b.ToTable("AppointmentTreatment");
                 });
@@ -399,7 +401,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Entities.Threatment", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Treatment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -414,7 +416,7 @@ namespace WebApplication1.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Threatment");
+                    b.ToTable("Treatment");
 
                     b.HasData(
                         new
@@ -550,16 +552,16 @@ namespace WebApplication1.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentThreatment", b =>
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentTreatment", b =>
                 {
                     b.HasOne("LdDevWebApp.Models.Entities.Appointment", "Appointment")
-                        .WithMany("AppointmentThreatment")
+                        .WithMany("AppointmentTreatment")
                         .HasForeignKey("AppointmentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("WebApplication1.Models.Entities.Threatment", "Threatment")
-                        .WithMany("AppointmentThreatment")
-                        .HasForeignKey("ThreatmentId")
+                    b.HasOne("WebApplication1.Models.Entities.Treatment", "Treatment")
+                        .WithMany("AppointmentTreatment")
+                        .HasForeignKey("TreatmentId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
