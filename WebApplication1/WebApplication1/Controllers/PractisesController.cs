@@ -87,7 +87,7 @@ namespace LdDevWebApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Note")] Practise practise)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Notes")] Practise practise)
         {
             if (id != practise.Id)
             {
