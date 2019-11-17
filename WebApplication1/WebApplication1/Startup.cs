@@ -36,6 +36,9 @@ namespace DentistCore2._2
             // LD this is for render HTML view
             services.AddScoped<IViewRenderService, ViewRenderService>();
 
+            //LD Dep. Injection of Mail Service
+            services.AddScoped<IMailService, MailService>();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;

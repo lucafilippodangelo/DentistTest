@@ -16,14 +16,21 @@ namespace DentistCore2._2.Data
 
         public DbSet<Appointment> Appointments { get; set; } 
         public DbSet<Person> Persons { get; set; }
+        public DbSet<Patient> Patient { get; set; }
+        public DbSet<Staff> Staff { get; set; }
+        
         public DbSet<StaffRole> StaffRoles { get; set; }
+
         public DbSet<Practise> Practises { get; set; }
-        public DbSet<Staff> Staff { get; set; } 
+        
         public DbSet<AppointmentStaff> AppointmentStaff { get; set; } //LD NtoN
+
+        public DbSet<Threatment> Threatment { get; set; }
         public DbSet<AppointmentThreatment> AppointmentTreatment { get; set; } //LD NtoN
+
         public DbSet<AppointmentLog> AppointmentLogs { get; set; } //LD 1toN
 
-        public DbSet<LdDevWebApp.Models.Entities.Patient> Patient { get; set; }
+        
 
 
 
@@ -92,10 +99,6 @@ namespace DentistCore2._2.Data
             /// LD setting delete behavior, reference -> https://www.learnentityframeworkcore.com/configuration/fluent-api/ondelete-method
             /// LD another reference https://www.thereformedprogrammer.net/updating-many-to-many-relationships-in-entity-framework-core/
         }
-
-
-
-        public DbSet<WebApplication1.Models.Entities.Threatment> Threatment { get; set; }
 
     }
 }

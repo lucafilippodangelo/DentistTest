@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.SignalR;
 using SmartBreadcrumbs.Attributes;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using WebApplication1.Helpers;
 
 namespace LdDevWebApp.Controllers
 {
@@ -27,22 +28,19 @@ namespace LdDevWebApp.Controllers
     public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IViewRenderService _viewRenderService;
+        private readonly IMailService _mailService;
         List<Appointment> letsSee;
-        private readonly IHubContext<AnHub> _hub;
 
         
-        public AppointmentsController(ApplicationDbContext context, IViewRenderService viewRenderService, IHubContext<AnHub> hubcontext)
+        public AppointmentsController(ApplicationDbContext context, IHubContext<AnHub> hubcontext, IMailService mailService)
         {
             _context = context;
-            _viewRenderService = viewRenderService;
-            _hub = hubcontext;
+            _mailService = mailService;
         }
 
         //[Authorize]
         public async Task<IActionResult> Index()
         {
-
             var appointments = _context.Appointments.AsNoTracking()
                                        .Include(app => app.Practise).AsNoTracking()
                                        .Include(a=>a.Patient).AsNoTracking()
@@ -88,62 +86,10 @@ namespace LdDevWebApp.Controllers
         //[Authorize]
         public async Task<IActionResult> SendMail(Guid? id)
         {
-
-            //LD NEED TO BE ASYNC
-            //Utility.SendMailTest(new List<UserActions>() { new UserActions {  actionId = 1, content = "link to confirm"},
-            //new UserActions {  actionId = 2, content = "link to cancel"},
-            //new UserActions {  actionId = 3, content = "link to call me back"}}
-            //) ;
-
-            var appointment = await _context.Appointments.Where(a => a.Id == id).SingleOrDefaultAsync();
-            if (appointment == null)
-            {
-                return NotFound();
-            }
-            else if (appointment.AptStateObject.GetType() == typeof(Initial) || appointment.AptStateObject.GetType() == typeof(MailSendError))
-            {
-                try
-                {
-                    //BUILD MAIL START
-                    //string urlRoute = Url.RouteUrl("Custom", new { id = id.Value }, "https");
-
-                    string urlRouteConfirm = Url.RouteUrl("Confirm", new { id = id.Value}, "https");
-                    string urlRouteCallMeBack = Url.RouteUrl("CallMeBack", new { id = id.Value}, "https");
-                    string urlRouteCancel = Url.RouteUrl("Cancel", new { id = id.Value}, "https");
-
-                    var aCustomInfo = new CustomInfo {
-                        DateTime = DateTime.Now,
-                        ActionEnumerator = 1,
-                        AppointmentId = id.Value,
-                        InternalKey = "abc",
-                        urlRouteConfirm = urlRouteConfirm,
-                        urlRouteCallMaBack = urlRouteCallMeBack,
-                        urlRouteCancel = urlRouteCancel
-                    };
-
-                    var Body = await _viewRenderService.RenderToStringAsync("UserAct/Landing", aCustomInfo);
-                    //BUILD MAIL END
-                    ProcessMail.SendMail("info@lucadangelo.it", "Subject", Body);
-
-                    appointment.UpdateStatus(AptStatusesEnum.st["MailSent"]);
-
-                    //LINK TO BE CREATED!!
-                    await _hub.Clients.All.SendAsync("ReceiveMessage", "<a href='#'class='alert-link'>an example link</a>", "SendMail", "success");
-                }
-                catch (Exception ex)
-                {
-                    appointment.UpdateStatus(AptStatusesEnum.st["MailSendError"]);
-                    await _hub.Clients.All.SendAsync("ReceiveMessage", "MAIL SENT ERROR", "SendMail", "danger");
-                }
-
-                _context.Update(appointment);
-                await _context.SaveChangesAsync();
-            }            
-
-            return NoContent();
+            return await _mailService.SendMail(id);
         }
 
-   
+
         //[Authorize]
         public IActionResult Create()
         {
