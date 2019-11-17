@@ -12,7 +12,7 @@ namespace WebApplication1.Models.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public Guid ThreatmentId { get; set; }
         public string Name { get; set; }
         public int Duration { get; set; } //average duration, basically is the standard duration
         public string Description { get; set; }

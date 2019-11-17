@@ -52,9 +52,9 @@ namespace DentistCore2._2.Data
             );
 
             mb.Entity<Threatment>().HasData(
-            new { Id = new System.Guid("75ea697a-9532-4592-b9e1-f6f010df2b3d"), IsActive = true, Name = "Seeded Treatment ONE", Duration = 30, Description = "Seeded Treatment ONE description" },
-            new { Id = new System.Guid("d769ef89-a0cd-4a0a-8e55-f8f1af709b57"), IsActive = true, Name = "Seeded Treatment TWO", Duration = 30, Description = "Seeded Treatment TWO description" },
-            new { Id = new System.Guid("d55797b7-de47-40f3-9b58-7a6b15aba521"), IsActive = true, Name = "Seeded Treatment THREE", Duration = 30, Description = "Seeded Treatment THREE description" }
+            new { ThreatmentId = new System.Guid("75ea697a-9532-4592-b9e1-f6f010df2b3d"), IsActive = true, Name = "Seeded Treatment ONE", Duration = 30, Description = "Seeded Treatment ONE description" },
+            new { ThreatmentId = new System.Guid("d769ef89-a0cd-4a0a-8e55-f8f1af709b57"), IsActive = true, Name = "Seeded Treatment TWO", Duration = 30, Description = "Seeded Treatment TWO description" },
+            new { ThreatmentId = new System.Guid("d55797b7-de47-40f3-9b58-7a6b15aba521"), IsActive = true, Name = "Seeded Treatment THREE", Duration = 30, Description = "Seeded Treatment THREE description" }
             );
 
             mb.Entity<Practise>().HasData(

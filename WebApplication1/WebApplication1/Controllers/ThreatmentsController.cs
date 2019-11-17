@@ -34,7 +34,7 @@ namespace WebApplication1.Controllers
             }
 
             var threatment = await _context.Threatment
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ThreatmentId == id);
             if (threatment == null)
             {
                 return NotFound();
@@ -58,7 +58,7 @@ namespace WebApplication1.Controllers
         {
             if (ModelState.IsValid)
             {
-                threatment.Id = Guid.NewGuid();
+                threatment.ThreatmentId = Guid.NewGuid();
                 _context.Add(threatment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -89,7 +89,7 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Duration,Description,IsActive")] Threatment threatment)
         {
-            if (id != threatment.Id)
+            if (id != threatment.ThreatmentId)
             {
                 return NotFound();
             }
@@ -103,7 +103,7 @@ namespace WebApplication1.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ThreatmentExists(threatment.Id))
+                    if (!ThreatmentExists(threatment.ThreatmentId))
                     {
                         return NotFound();
                     }
@@ -126,7 +126,7 @@ namespace WebApplication1.Controllers
             }
 
             var threatment = await _context.Threatment
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ThreatmentId == id);
             if (threatment == null)
             {
                 return NotFound();
@@ -148,7 +148,7 @@ namespace WebApplication1.Controllers
 
         private bool ThreatmentExists(Guid id)
         {
-            return _context.Threatment.Any(e => e.Id == id);
+            return _context.Threatment.Any(e => e.ThreatmentId == id);
         }
     }
 }

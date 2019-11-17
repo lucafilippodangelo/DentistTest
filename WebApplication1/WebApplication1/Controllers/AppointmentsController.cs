@@ -96,6 +96,9 @@ namespace LdDevWebApp.Controllers
             // add informations to select staff
             ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "DisplayName", new[] { Guid.Parse ("ee243d91-ddf1-48f6-827d-0bfa6616bae1") }); //sourse, Key, Value, Default array list
 
+            var luca = _context.Threatment;
+            ViewBag.Threatment = new MultiSelectList(luca, "ThreatmentId", "Name"); 
+
             // add info to select "IsActive" patients
             ViewData["Patients"] = new SelectList(_context.Patient.Where(p => p.IsActive == true), "Id", "DisplayName");
 
@@ -108,7 +111,7 @@ namespace LdDevWebApp.Controllers
         [HttpPost]
         //[Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,When,Notes,Patient,Practise")] Appointment aptBind, Guid[] Id)
+        public async Task<IActionResult> Create([Bind("Id,When,Notes,Patient,Practise")] Appointment aptBind, Guid[] Id, Guid[] ThreatmentId)
         {
             //Got rid of model validations for "Patient", once just the Id is returned and I do not need to run any check at this stage
             ModelState.Remove("Patient.Name");
@@ -116,11 +119,10 @@ namespace LdDevWebApp.Controllers
             ModelState.Remove("Patient.Surname");
             if (ModelState.IsValid)
             {
-                IList<Guid> aptStaffList = new List<Guid>(Id);
-
                 aptBind.Id = Guid.NewGuid();
 
                 // map staff for appointment
+                IList<Guid> aptStaffList = new List<Guid>(Id);
                 List<AppointmentStaff> anList = new List<AppointmentStaff>();
                 foreach (Guid aGuidInList in aptStaffList)
                 {
@@ -131,6 +133,19 @@ namespace LdDevWebApp.Controllers
                     }) ;
                 }
                 aptBind.AppointmentStaff = anList;
+
+                // map Threatments for an appointment 
+                IList<Guid> aptThreatmentList = new List<Guid>(ThreatmentId);
+                List<AppointmentThreatment> aList = new List<AppointmentThreatment>();
+                foreach (Guid aGuidInList in aptThreatmentList)
+                {
+                    aList.Add(new AppointmentThreatment
+                    {
+                        AppointmentId = aptBind.Id,
+                        ThreatmentId = aGuidInList
+                    });
+                }
+                aptBind.AppointmentThreatment = aList;
 
                 aptBind.Patient = _context.Patient.FirstOrDefault(p => p.Id == aptBind.Patient.Id);
 
