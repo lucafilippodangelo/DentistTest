@@ -53,6 +53,11 @@
                 @Html.ListBox("staffSelectedAptBind", ViewBag.Staff as MultiSelectList, new { multiple = "multiple" })
             </div>
 
+            <div>something</div>
+            <div>
+                @Html.ListBox("threatmentsSelectedAptBind", ViewBag.Threatment as MultiSelectList, new { multiple = "multiple" })
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>

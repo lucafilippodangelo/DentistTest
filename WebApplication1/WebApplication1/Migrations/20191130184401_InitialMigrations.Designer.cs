@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191115003625_g")]
-    partial class g
+    [Migration("20191130184401_InitialMigrations")]
+    partial class InitialMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -127,15 +127,15 @@ namespace WebApplication1.Migrations
                     b.ToTable("AppointmentStaff");
                 });
 
-            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentTreatment", b =>
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentThreatment", b =>
                 {
                     b.Property<Guid>("AppointmentId");
 
-                    b.Property<Guid>("TreatmentId");
+                    b.Property<Guid>("ThreatmentId");
 
-                    b.HasKey("AppointmentId", "TreatmentId");
+                    b.HasKey("AppointmentId", "ThreatmentId");
 
-                    b.HasIndex("TreatmentId");
+                    b.HasIndex("ThreatmentId");
 
                     b.ToTable("AppointmentTreatment");
                 });
@@ -401,9 +401,9 @@ namespace WebApplication1.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Entities.Treatment", b =>
+            modelBuilder.Entity("WebApplication1.Models.Entities.Threatment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ThreatmentId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Description");
@@ -414,14 +414,14 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("Name");
 
-                    b.HasKey("Id");
+                    b.HasKey("ThreatmentId");
 
-                    b.ToTable("Treatment");
+                    b.ToTable("Threatment");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("75ea697a-9532-4592-b9e1-f6f010df2b3d"),
+                            ThreatmentId = new Guid("75ea697a-9532-4592-b9e1-f6f010df2b3d"),
                             Description = "Seeded Treatment ONE description",
                             Duration = 30,
                             IsActive = true,
@@ -429,7 +429,7 @@ namespace WebApplication1.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d769ef89-a0cd-4a0a-8e55-f8f1af709b57"),
+                            ThreatmentId = new Guid("d769ef89-a0cd-4a0a-8e55-f8f1af709b57"),
                             Description = "Seeded Treatment TWO description",
                             Duration = 30,
                             IsActive = true,
@@ -437,7 +437,7 @@ namespace WebApplication1.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d55797b7-de47-40f3-9b58-7a6b15aba521"),
+                            ThreatmentId = new Guid("d55797b7-de47-40f3-9b58-7a6b15aba521"),
                             Description = "Seeded Treatment THREE description",
                             Duration = 30,
                             IsActive = true,
@@ -552,16 +552,16 @@ namespace WebApplication1.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentTreatment", b =>
+            modelBuilder.Entity("LdDevWebApp.Models.Entities.AppointmentThreatment", b =>
                 {
                     b.HasOne("LdDevWebApp.Models.Entities.Appointment", "Appointment")
-                        .WithMany("AppointmentTreatment")
+                        .WithMany("AppointmentThreatment")
                         .HasForeignKey("AppointmentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("WebApplication1.Models.Entities.Treatment", "Treatment")
-                        .WithMany("AppointmentTreatment")
-                        .HasForeignKey("TreatmentId")
+                    b.HasOne("WebApplication1.Models.Entities.Threatment", "Threatment")
+                        .WithMany("AppointmentThreatment")
+                        .HasForeignKey("ThreatmentId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

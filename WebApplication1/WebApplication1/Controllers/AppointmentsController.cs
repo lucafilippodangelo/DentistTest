@@ -181,6 +181,7 @@ namespace LdDevWebApp.Controllers
             //var appointment = _context.Appointments.Include(x => x.AppointmentStaff).Where (w => w.Id == id).Single();
             var appointment = await _context.Appointments
                                             .Include(x => x.AppointmentStaff)
+                                            .Include(x => x.AppointmentThreatment)
                                             .Include (pa => pa.Patient).AsNoTracking() //LD to avoid Key conflict when updating related entity in post
                                             .Include(pr => pr.Practise).AsNoTracking() //LD to avoid Key conflict when updating related entity in post
                                             .FirstOrDefaultAsync(w => w.Id == id);
@@ -213,6 +214,10 @@ namespace LdDevWebApp.Controllers
                 var listSelectedStaffIds = appointment.AppointmentStaff.Select(s => s.StaffId).ToList();
                 ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "DisplayName", listSelectedStaffIds); //source, Key, Value, Default 
 
+                //LD managing the staff for the appointment
+                var listSelectedThreatmentsIds = appointment.AppointmentThreatment.Where(s => s.AppointmentId == appointment .Id).Select(s => s.ThreatmentId).ToList();
+                ViewBag.Threatment = new MultiSelectList(_context.Threatment, "ThreatmentId", "Name", listSelectedThreatmentsIds); 
+
                 return View(appointment);
             }
             
@@ -221,7 +226,7 @@ namespace LdDevWebApp.Controllers
         [HttpPost]
         //[Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID,Patient,Practise")] Appointment aptBind, Guid[] staffSelectedAptBind)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,When,Notes,StatusID,Patient,Practise")] Appointment aptBind, Guid[] staffSelectedAptBind, Guid[] threatmentsSelectedAptBind)
         {
             //Got rid of model validations for "Patient", once just the Id is returned and I do not need to run any check at this stage
             ModelState.Remove("Patient.Name");
@@ -235,13 +240,13 @@ namespace LdDevWebApp.Controllers
 
             // Business-Logic, need to check if state is not initial that: patient,practise,aptStaff,Threatments,when -> are not changed 
             // In case a model error is added
-            updatingNotAllowedFieldsForSelectedState(aptBind, staffSelectedAptBind);
+            updatingNotAllowedFieldsForSelectedState(aptBind, staffSelectedAptBind, threatmentsSelectedAptBind);
            
             if (ModelState.IsValid)
             {
                 try
                 {
-                    UpdateAppointment(staffSelectedAptBind, aptBind);
+                    UpdateAppointmentJoinEntities(staffSelectedAptBind, threatmentsSelectedAptBind, aptBind);
 
                     AppointmentLog anAptLog = new AppointmentLog { Information = "UPDATED app " + aptBind.Id, When = DateTime.UtcNow, Appointment = aptBind };
                     _context.Add(anAptLog);
@@ -275,7 +280,10 @@ namespace LdDevWebApp.Controllers
             ViewData["Practises"] = new SelectList(_context.Practises.Where(p => p.IsActive == true), "Id", "Name", aptBind.Practise.Id.ToString());
 
             //LD managing the staff for the appointment
-            ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "DisplayName", staffSelectedAptBind); //source, Key, Value, Default 
+            ViewBag.Staff = new MultiSelectList(_context.Staff, "Id", "DisplayName", staffSelectedAptBind);
+
+            //LD managing the threatments for the appointment
+            ViewBag.Threatment = new MultiSelectList(_context.Threatment, "ThreatmentId", "Name", threatmentsSelectedAptBind);
 
             return View(aptBind);
         }
@@ -324,16 +332,16 @@ namespace LdDevWebApp.Controllers
         /// </summary>
         /// <param name="SelectedAptStaff"></param>
         /// <param name="aptToUpdate"></param>
-        private void UpdateAppointment(Guid[] staffSelectedAptBind, Appointment aptBind)
+        private void UpdateAppointmentJoinEntities(Guid[] staffSelectedAptBind, Guid[] threatmentsSelectedAptBind, Appointment aptBind)
         {
             // ------------------------------------------------------------------------------------------------------------------------------------
             //LD the query below is useful only to retrieve the currently staff saved in database for the appointment in context 
             var currentDbApt = _context.Appointments
                 .Include(pa => pa.Patient)
                 .Include(pr => pr.Practise)
-                .Include(x => x.AppointmentStaff)
-                        .ThenInclude(x => x.Staff)
-                        .FirstOrDefault(w => w.Id == aptBind.Id);
+                .Include(x => x.AppointmentStaff).ThenInclude(x => x.Staff)
+                .Include(x => x.AppointmentThreatment).ThenInclude(t => t.Threatment)
+                .FirstOrDefault(w => w.Id == aptBind.Id);
 
             //LD just binding what received in input on the main "Appointment" Object
             currentDbApt.When = aptBind.When;
@@ -372,6 +380,36 @@ namespace LdDevWebApp.Controllers
                 }
             }
 
+
+            // ------------------------------------------------------------------------------------------------------------------------------------
+            // LD need to update NtoN "AppointmentStaff". The idea is to remove from the apt in context the existing staff list and replace with the currently replaced one.
+            if (staffSelectedAptBind == null)
+            {
+                aptBind.AppointmentStaff = new List<AppointmentStaff>();
+                return;
+            }
+
+            var threatmentSelectedAptBindHS = new HashSet<Guid>(threatmentsSelectedAptBind); //the selected threatment list posted in edit
+            var currentDbAptThreatmentHS = new HashSet<Guid>(currentDbApt.AppointmentThreatment.Select(c => c.Threatment.ThreatmentId)); //list of threatments for the appointment in db
+
+            foreach (var aThreatment in _context.Threatment)
+            {
+                if (threatmentSelectedAptBindHS.Contains(aThreatment.ThreatmentId))
+                {
+                    if (!currentDbAptThreatmentHS.Contains(aThreatment.ThreatmentId))
+                        //then add in the appointment
+                        currentDbApt.AppointmentThreatment.Add(new AppointmentThreatment { AppointmentId = aptBind.Id, ThreatmentId = aThreatment.ThreatmentId });
+                }
+                else
+                if (currentDbAptThreatmentHS.Contains(aThreatment.ThreatmentId))
+                {
+                    //need to REMOVE FROM THE CONTEXT what not selected anymore 
+                    AppointmentThreatment appointmentThreatmentToRemove = currentDbApt.AppointmentThreatment.FirstOrDefault(i => i.ThreatmentId == aThreatment.ThreatmentId);
+
+                    _context.Remove(appointmentThreatmentToRemove); // it was possible even to do -> //aptBind.AppointmentStaff.Remove(appointmentStaffToRemove);
+                }
+            }
+
             _context.Update(currentDbApt);
 
         }
@@ -383,26 +421,31 @@ namespace LdDevWebApp.Controllers
         /// <param name="aptBind"></param>
         /// <param name="staffSelectedAptBind"></param>
         /// <returns></returns>
-        private bool updatingNotAllowedFieldsForSelectedState(Appointment aptBind, Guid[] staffSelectedAptBind)
+        private bool updatingNotAllowedFieldsForSelectedState(Appointment aptBind, Guid[] staffSelectedAptBind, Guid[] threatmentsSelectedAptBind)
         {
             //LD current appointment and related info
             var currentDbApt = _context.Appointments.AsNoTracking()
                         .Include(p => p.Patient).AsNoTracking()
                         .Include(pr => pr.Practise).AsNoTracking()
-                        .Include(x => x.AppointmentStaff)
-                        .ThenInclude(x => x.Staff)
+                        .Include(x => x.AppointmentStaff).ThenInclude(x => x.Staff)
+                        .Include(x => x.AppointmentThreatment).ThenInclude (x => x.Threatment)
                         .FirstOrDefault(w => w.Id == aptBind.Id);
 
+            //LD manage staff ---------------------------------------------------------------------------------------------------
             var staffSelectedAptBindHS = new HashSet<Guid>(staffSelectedAptBind); //the selected staff in edit
             var currentDbAptStaffHS = new HashSet<Guid>(currentDbApt.AppointmentStaff.Select(c => c.Staff.Id)); //list of staff for the appointment
 
-                var dirty = false;
+            //LD manage threatments ---------------------------------------------------------------------------------------------------
+            var threatmentsSelectedAptBindHS = new HashSet<Guid>(threatmentsSelectedAptBind); //the selected staff in edit
+            var currentDbAptThreatmentsHS = new HashSet<Guid>(currentDbApt.AppointmentThreatment.Select(c => c.Threatment.ThreatmentId)); //list of staff for the appointment
+
+            var dirty = false;
             if (aptBind.StatusID != AptStatusesEnum.st["Initial"])
             {
-                if (!staffSelectedAptBindHS.Overlaps (currentDbAptStaffHS)) //if the two hashsets does not share the same content
+                if (!staffSelectedAptBindHS.Overlaps(currentDbAptStaffHS) || !staffSelectedAptBindHS.Overlaps(currentDbAptStaffHS)) //if the two hashsets does not share the same content
                 {
                     dirty = true;
-                    ModelState.AddModelError("", "Impossible to update Staff Appointment when State is not Initial");
+                    ModelState.AddModelError("", "Impossible to update Staff or Threatment for Appointment when State is not Initial");
                 }
                 if (aptBind.Patient.Id != currentDbApt.Patient.Id)
                 {

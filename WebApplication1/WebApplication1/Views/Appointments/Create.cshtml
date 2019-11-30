@@ -22,10 +22,11 @@
                 <input asp-for="Notes" class="form-control" />
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
+            <div>something</div>
             <div class="list-group">
                 @Html.DropDownList("Id", (MultiSelectList)ViewBag.Staff, new { multiple = "multiple" })
             </div>
-
+            <div>something</div>
             <div class="list-group">
                 @Html.DropDownList("ThreatmentId", (MultiSelectList)ViewBag.Threatment, new { multiple = "multiple" })
             </div>

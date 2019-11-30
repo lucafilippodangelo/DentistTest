@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApplication1.Migrations
 {
-    public partial class test : Migration
+    public partial class InitialMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,7 +54,8 @@ namespace WebApplication1.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Address = table.Column<string>(nullable: true),
-                    Notes = table.Column<string>(nullable: true)
+                    Notes = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,6 +73,21 @@ namespace WebApplication1.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StaffRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Threatment",
+                columns: table => new
+                {
+                    ThreatmentId = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Duration = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Threatment", x => x.ThreatmentId);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,6 +206,7 @@ namespace WebApplication1.Migrations
                     Phone = table.Column<string>(nullable: true),
                     Note = table.Column<string>(maxLength: 1000, nullable: true),
                     Email = table.Column<string>(maxLength: 150, nullable: false),
+                    IsActive = table.Column<bool>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     StaffRoleID = table.Column<Guid>(nullable: true)
                 },
@@ -212,15 +229,15 @@ namespace WebApplication1.Migrations
                     When = table.Column<DateTime>(nullable: false),
                     Notes = table.Column<string>(nullable: true),
                     StatusID = table.Column<Guid>(nullable: false),
-                    PatientID = table.Column<Guid>(nullable: false),
-                    PractiseId = table.Column<Guid>(nullable: true)
+                    PatientId = table.Column<Guid>(nullable: false),
+                    PractiseId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Appointments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Appointments_Persons_PatientID",
-                        column: x => x.PatientID,
+                        name: "FK_Appointments_Persons_PatientId",
+                        column: x => x.PatientId,
                         principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -229,7 +246,7 @@ namespace WebApplication1.Migrations
                         column: x => x.PractiseId,
                         principalTable: "Practises",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -276,22 +293,46 @@ namespace WebApplication1.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AppointmentTreatment",
+                columns: table => new
+                {
+                    AppointmentId = table.Column<Guid>(nullable: false),
+                    ThreatmentId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppointmentTreatment", x => new { x.AppointmentId, x.ThreatmentId });
+                    table.ForeignKey(
+                        name: "FK_AppointmentTreatment_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppointmentTreatment_Threatment_ThreatmentId",
+                        column: x => x.ThreatmentId,
+                        principalTable: "Threatment",
+                        principalColumn: "ThreatmentId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "Persons",
-                columns: new[] { "Id", "Discriminator", "Email", "Name", "Note", "Phone", "Surname" },
+                columns: new[] { "Id", "Discriminator", "Email", "IsActive", "Name", "Note", "Phone", "Surname" },
                 values: new object[,]
                 {
-                    { new Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), "Patient", "sviluppo.dangelo@gmail.com", "Patient one NAME", null, null, "Patient one Surname" },
-                    { new Guid("99b48598-b815-4d08-aa20-9492f41738ea"), "Patient", "info@lucadangelo.it", "Patient two NAME", null, null, "Patient two Surname" }
+                    { new Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), "Patient", "sviluppo.dangelo@gmail.com", true, "Patient one NAME", null, null, "Patient one Surname" },
+                    { new Guid("99b48598-b815-4d08-aa20-9492f41738ea"), "Patient", "info@lucadangelo.it", true, "Patient two NAME", null, null, "Patient two Surname" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Practises",
-                columns: new[] { "Id", "Address", "Name", "Notes" },
+                columns: new[] { "Id", "Address", "IsActive", "Name", "Notes" },
                 values: new object[,]
                 {
-                    { new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), null, "Practise One", "Seeded Practise Note One" },
-                    { new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), null, "Practise Two", "Seeded Practise Note Two" }
+                    { new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), null, true, "Practise One", "Seeded Practise Note One" },
+                    { new Guid("9012aa35-1433-48fe-ae72-de2aaa38e37e"), null, true, "Practise Two", "Seeded Practise Note Two" }
                 });
 
             migrationBuilder.InsertData(
@@ -304,8 +345,18 @@ namespace WebApplication1.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Threatment",
+                columns: new[] { "ThreatmentId", "Description", "Duration", "IsActive", "Name" },
+                values: new object[,]
+                {
+                    { new Guid("75ea697a-9532-4592-b9e1-f6f010df2b3d"), "Seeded Treatment ONE description", 30, true, "Seeded Treatment ONE" },
+                    { new Guid("d769ef89-a0cd-4a0a-8e55-f8f1af709b57"), "Seeded Treatment TWO description", 30, true, "Seeded Treatment TWO" },
+                    { new Guid("d55797b7-de47-40f3-9b58-7a6b15aba521"), "Seeded Treatment THREE description", 30, true, "Seeded Treatment THREE" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Appointments",
-                columns: new[] { "Id", "Notes", "PatientID", "PractiseId", "StatusID", "When" },
+                columns: new[] { "Id", "Notes", "PatientId", "PractiseId", "StatusID", "When" },
                 values: new object[,]
                 {
                     { new Guid("644f17b2-6e34-4cad-bab5-8bba425270a4"), "Seeded Appointment One", new Guid("5b6c0ab6-c947-4279-9e35-53e2fa3cc1ff"), new Guid("8912aa35-1433-48fe-ae72-de2aaa38e37e"), new Guid("12d19fe2-ad58-409b-8ccb-0bf9f9eaa483"), new DateTime(2019, 5, 1, 8, 30, 52, 0, DateTimeKind.Unspecified) },
@@ -314,13 +365,13 @@ namespace WebApplication1.Migrations
 
             migrationBuilder.InsertData(
                 table: "Persons",
-                columns: new[] { "Id", "Discriminator", "Email", "Name", "Note", "Phone", "Surname", "StaffRoleID" },
+                columns: new[] { "Id", "Discriminator", "Email", "IsActive", "Name", "Note", "Phone", "Surname", "StaffRoleID" },
                 values: new object[,]
                 {
-                    { new Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), "Staff", "sviluppo.dangelo@gmail.com", "Seeded staff one name", null, null, "Seeded staff one Surname", new Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
-                    { new Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), "Staff", "info@lucadangelo.it", "Seeded staff two name", null, null, "Seeded staff two Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
-                    { new Guid("f6ad3484-6916-4b5b-9a7e-5bbf69d9996a"), "Staff", "info@lucadangelo.it", "Seeded staff three name", null, null, "Seeded staff three Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
-                    { new Guid("567f81a6-ff37-4329-ae7b-3364f781700f"), "Staff", "info@lucadangelo.it", "Seeded staff four name", null, null, "Seeded staff four Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
+                    { new Guid("1eb6bee1-e634-4b1e-9caf-5ce80b45604c"), "Staff", "sviluppo.dangelo@gmail.com", true, "Seeded staff one name", null, null, "Seeded staff one Surname", new Guid("1a637f30-a003-48af-8f46-21328531e9c8") },
+                    { new Guid("ee243d91-ddf1-48f6-827d-0bfa6616bae1"), "Staff", "info@lucadangelo.it", true, "Seeded staff two name", null, null, "Seeded staff two Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
+                    { new Guid("f6ad3484-6916-4b5b-9a7e-5bbf69d9996a"), "Staff", "info@lucadangelo.it", true, "Seeded staff three name", null, null, "Seeded staff three Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") },
+                    { new Guid("567f81a6-ff37-4329-ae7b-3364f781700f"), "Staff", "info@lucadangelo.it", true, "Seeded staff four name", null, null, "Seeded staff four Surname", new Guid("a24a0521-52e2-438b-a1d5-1db1f75c836b") }
                 });
 
             migrationBuilder.InsertData(
@@ -340,9 +391,9 @@ namespace WebApplication1.Migrations
                 column: "AppointmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Appointments_PatientID",
+                name: "IX_Appointments_PatientId",
                 table: "Appointments",
-                column: "PatientID");
+                column: "PatientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_PractiseId",
@@ -353,6 +404,11 @@ namespace WebApplication1.Migrations
                 name: "IX_AppointmentStaff_StaffId",
                 table: "AppointmentStaff",
                 column: "StaffId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppointmentTreatment_ThreatmentId",
+                table: "AppointmentTreatment",
+                column: "ThreatmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -408,6 +464,9 @@ namespace WebApplication1.Migrations
                 name: "AppointmentStaff");
 
             migrationBuilder.DropTable(
+                name: "AppointmentTreatment");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -424,6 +483,9 @@ namespace WebApplication1.Migrations
 
             migrationBuilder.DropTable(
                 name: "Appointments");
+
+            migrationBuilder.DropTable(
+                name: "Threatment");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
