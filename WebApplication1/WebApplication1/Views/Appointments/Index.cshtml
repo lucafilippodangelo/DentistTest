@@ -37,50 +37,59 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Patient.Name)
-                    @Html.DisplayFor(modelItem => item.Patient.Surname)
-                </td>
-                <td>
-                    ----- STAFF -----
-                </td>
-                <td>
-                    ----- TREATMENT -----
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.When)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Practise.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AptStateObject.AptStateDescription)
-                </td>
-                <td>
-                    <div>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Patient.Name)
+                @Html.DisplayFor(modelItem => item.Patient.Surname)
+            </td>
 
-                        <a class="btn btn-secondary" role="button" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    </div>
-                    <div>
-                        <a class="btn btn-secondary" role="button" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+            <td>
+                @foreach (var item2 in item.AppointmentStaff)
+                {
+                    @Html.DisplayFor(modelItem => item2.Staff.Name)
+                }
+            </td>
 
-                    </div>
-                    <div>
+            <td>
+                @foreach (var item3 in item.AppointmentThreatment)
+                {
+                    @Html.DisplayFor(modelItem => item3.Threatment.Name)
+                }
+            </td>
 
-                        @*<a class="btn btn-outline-danger" role="button" asp-action="Delete" asp-route-id="@item.Id">Delete</a> |*@
-                        @if (item.AptStateObject.AptStateDescription == "Initial" || item.AptStateObject.AptStateDescription == "MailSendError")
-                        {
-                            <a class="btn btn-primary" role="button" asp-action="SendMail" asp-route-id="@item.Id" onclick="return confirm('Are you sure you want to send the email?')">Send</a>
-                        }
-                    </div>
-                    
-                    
+            <td>
+                @Html.DisplayFor(modelItem => item.When)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Practise.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AptStateObject.AptStateDescription)
+            </td>
+            <td>
+                <div>
+
+                    <a class="btn btn-secondary" role="button" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                </div>
+                <div>
+                    <a class="btn btn-secondary" role="button" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+
+                </div>
+                <div>
+
+                    @*<a class="btn btn-outline-danger" role="button" asp-action="Delete" asp-route-id="@item.Id">Delete</a> |*@
+                    @if (item.AptStateObject.AptStateDescription == "Initial" || item.AptStateObject.AptStateDescription == "MailSendError")
+                    {
+                        <a class="btn btn-primary" role="button" asp-action="SendMail" asp-route-id="@item.Id" onclick="return confirm('Are you sure you want to send the email?')">Send</a>
+                    }
+                </div>
 
 
 
-                </td>
-            </tr>
+
+
+            </td>
+        </tr>
         }
 
     </tbody>

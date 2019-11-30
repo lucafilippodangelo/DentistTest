@@ -42,10 +42,12 @@ namespace LdDevWebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var appointments = _context.Appointments.AsNoTracking()
-                                       .Include(app => app.Practise).AsNoTracking()
-                                       .Include(a=>a.Patient).AsNoTracking()
-                                       .OrderBy(app => app.When)
-                                       .ToListAsync();
+                                        .Include(app => app.AppointmentStaff).ThenInclude (s => s.Staff).AsNoTracking()
+                                        .Include(app => app.AppointmentThreatment).ThenInclude(s => s.Threatment).AsNoTracking()
+                                        .Include(app => app.Practise).AsNoTracking()
+                                        .Include(a=>a.Patient).AsNoTracking()
+                                        .OrderBy(app => app.When)
+                                        .ToListAsync();
             letsSee = await appointments;
 
             //after retrieving from database then I set not mapped attributes
@@ -64,9 +66,22 @@ namespace LdDevWebApp.Controllers
 
             var appointment = await _context.Appointments
                                             .Include(a => a.AppointmentLogs)
-                                            .Include(a => a.Practise)
+                                            .Include(app => app.Practise).AsNoTracking()
+                                            .Include(a => a.Patient).AsNoTracking()
+                                            .Include(app => app.AppointmentStaff).ThenInclude(s => s.Staff).AsNoTracking()
+                                            .Include(app => app.AppointmentThreatment).ThenInclude(s => s.Threatment).AsNoTracking()
                                             .Where(a => a.Id == id)
                                             .SingleOrDefaultAsync();
+
+            /*
+                         var appointments = _context.Appointments.AsNoTracking()
+                                        .Include(app => app.AppointmentStaff).ThenInclude (s => s.Staff).AsNoTracking()
+                                        .Include(app => app.AppointmentThreatment).ThenInclude(s => s.Threatment).AsNoTracking()
+                                        .Include(app => app.Practise).AsNoTracking()
+                                        .Include(a=>a.Patient).AsNoTracking()
+                                        .OrderBy(app => app.When)
+                                        .ToListAsync();
+             */
             if (appointment == null)
             {
                 return NotFound();
