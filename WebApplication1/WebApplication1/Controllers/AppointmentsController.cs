@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.SignalR;
 using SmartBreadcrumbs.Attributes;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using WebApplication1.Helpers;
+using System.Linq.Dynamic;
 
 namespace LdDevWebApp.Controllers
 {
@@ -29,7 +30,7 @@ namespace LdDevWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMailService _mailService;
-        List<Appointment> letsSee;
+        
 
         
         public AppointmentsController(ApplicationDbContext context, IHubContext<AnHub> hubcontext, IMailService mailService)
@@ -39,21 +40,40 @@ namespace LdDevWebApp.Controllers
         }
 
         //[Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder = "surname_asc")
         {
+            
+
+            ViewBag.SurnameSortParm = sortOrder == "surname_asc" ? "surname_desc" : "surname_asc";
+            //ViewBag.SurnameSortParm = sortOrder == "surname_desc" ? "surname_asc" : "surname_desc";
+
             var appointments = _context.Appointments.AsNoTracking()
-                                        .Include(app => app.AppointmentStaff).ThenInclude (s => s.Staff).AsNoTracking()
-                                        .Include(app => app.AppointmentThreatment).ThenInclude(s => s.Threatment).AsNoTracking()
-                                        .Include(app => app.Practise).AsNoTracking()
-                                        .Include(a=>a.Patient).AsNoTracking()
-                                        .OrderBy(app => app.When)
-                                        .ToListAsync();
-            letsSee = await appointments;
+                            .Include(app => app.AppointmentStaff).ThenInclude(s => s.Staff).AsNoTracking()
+                            .Include(app => app.AppointmentThreatment).ThenInclude(s => s.Threatment).AsNoTracking()
+                            .Include(app => app.Practise).AsNoTracking()
+                            .Include(a => a.Patient).AsNoTracking()
+            ;
 
-            //after retrieving from database then I set not mapped attributes
-            letsSee.ForEach(p => p.setAptStateObject());
+            switch (sortOrder)
+            {
+                case "surname_asc":
+                    //appointments = appointments.Where(ff => ff.Patient.Surname == "a");
+                    appointments = appointments.OrderBy(ff => ff.Patient.Surname).ThenBy (ff => ff.Patient.Name);
+                    break;
+                case "surname_desc":
+                    appointments = appointments.OrderByDescending (ff => ff.Patient.Surname).ThenBy(ff => ff.Patient.Name);
+                    break;
+                //case "date_desc":
+                //    letsSee = letsSee.OrderByDescending(s => s.When);
+                //    break;
+                default:
+                    appointments = appointments.OrderBy(ff => ff.When);
+                    break;
+            }
 
-            return View(letsSee);
+            var m = await appointments.ToListAsync ();
+
+            return View(m);
         }
 
         //[Authorize]
@@ -73,15 +93,6 @@ namespace LdDevWebApp.Controllers
                                             .Where(a => a.Id == id)
                                             .SingleOrDefaultAsync();
 
-            /*
-                         var appointments = _context.Appointments.AsNoTracking()
-                                        .Include(app => app.AppointmentStaff).ThenInclude (s => s.Staff).AsNoTracking()
-                                        .Include(app => app.AppointmentThreatment).ThenInclude(s => s.Threatment).AsNoTracking()
-                                        .Include(app => app.Practise).AsNoTracking()
-                                        .Include(a=>a.Patient).AsNoTracking()
-                                        .OrderBy(app => app.When)
-                                        .ToListAsync();
-             */
             if (appointment == null)
             {
                 return NotFound();
@@ -210,7 +221,7 @@ namespace LdDevWebApp.Controllers
 
                 //LD managing the state of the appointment
                 var subKeyValue = AptStatusesEnum.st
-                                  .Where(d => d.Value == AptStatusesEnum.st["Initial"] || d.Value == AptStatusesEnum.st["Aborted"])
+                                  .Where(d => d.Value == AptStatusesEnum.st["Initial"] || d.Value == AptStatusesEnum.st["Aborted"] || d.Value == AptStatusesEnum.st["Confirmed"])
                                   .ToList();
                 // 'SelectList' explanation: 
                 //parm -> 'inputlist' is 'subKeyValue'

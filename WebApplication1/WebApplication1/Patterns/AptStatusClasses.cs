@@ -58,7 +58,11 @@ namespace LdDevWebApp.BehavioralPatterns.AppointmentStatuses
                 {
                     apt.SaveStatus(new Aborted(), anAptEvent);
                 }
-            }
+                else if (anAptEvent == AptStatusesEnum.st["Confirmed"]) // "InitialToConfirmed"
+                {
+                    apt.SaveStatus(new Confirmed(), anAptEvent);
+                }
+        }
         }
 
 

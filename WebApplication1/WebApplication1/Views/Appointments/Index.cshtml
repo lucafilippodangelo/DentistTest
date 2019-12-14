@@ -17,7 +17,20 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Patient.DisplayName )
+                @Html.ActionLink("Surname", "Index", new { sortOrder = ViewBag.SurnameSortParm })
+            </th>
+            <th>
+                First Name
+            </th>
+            <th>
+                @Html.ActionLink("Appointment Date", "Index", new { sortOrder = ViewBag.DateSortParm })
+            </th>
+            <th></th>
+        </tr>
+
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Patient.DisplayName)
             </th>
             <th>
                 Staff
